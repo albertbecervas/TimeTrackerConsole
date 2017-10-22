@@ -20,11 +20,6 @@ public class Main {
 
     private static ArrayList<Item> items; //Main items of the tree, coming from node 0
 
-    //TODO remove constructor when code is on eclipse
-    public Main(){
-        main(null);
-    }
-
     public static void main(String[] args) {
 
         //We ask the file to return saved items
@@ -53,9 +48,9 @@ public class Main {
         System.out.println("  5.Create project");
         System.out.println("Enter a number: ");
 
-//        int menuOption = reader.nextInt(); // Scans the next token of the input as an int.
+        int menuOption = reader.nextInt(); // Scans the next token of the input as an int.
 
-        setMenuAction(1);
+        setMenuAction(menuOption);
 
         reader.close(); //Stops scanning the console
     }
