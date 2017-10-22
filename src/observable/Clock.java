@@ -6,8 +6,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Clock extends Observable {
-	
-	public static final int CLOCK_SECONDS = 2;
+
+    public static final int CLOCK_SECONDS = 2;
 
     private static Clock instance = null;
 
@@ -15,7 +15,7 @@ public class Clock extends Observable {
         Observable observer = this;
         Thread thread = new Thread((Clock) observer);
         Timer timer = new Timer();
-        timer.schedule(thread, new Date(), CLOCK_SECONDS*1000);
+        timer.schedule(thread, new Date(), CLOCK_SECONDS * 1000);
     }
 
     public static Clock getInstance() {

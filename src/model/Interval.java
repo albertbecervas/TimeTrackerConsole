@@ -8,48 +8,30 @@ import java.util.Observer;
 import callback.IntervalCallback;
 import observable.Clock;
 
-public class Interval implements Serializable, Observer {
-	
-	private IntervalCallback mCallback;
 
+public class Interval implements Serializable, Observer {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private Date startWorkingLogDate;
-    private Date endWorkingLogDate;
-    private long duration;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
+    private IntervalCallback mCallback;
+
+    private Period period;
     private boolean isOpen;
 
-    public Interval() {
-        //empty constructor
-    	Clock.getInstance().addObserver(this);
-    }
-
-    public Interval(Date startWorkingLogDate, Date endWorkingLogDate, Task task) {
-        this.startWorkingLogDate = startWorkingLogDate;
-        this.endWorkingLogDate = endWorkingLogDate;
+    public Interval(Task task) {
+        this.period = new Period(new Date());
         this.isOpen = true;
         this.mCallback = task;
         Clock.getInstance().addObserver(this);
     }
 
-    public Date getStartWorkingLogDate() {
-        return startWorkingLogDate;
-    }
-
-    public Date getEndWorkingLogDate() {
-        return endWorkingLogDate;
-    }
-
-    public void setEndWorkingLogDate(Date endWorkingLogDate) {
-        this.endWorkingLogDate = endWorkingLogDate;
-    }
-
     public void setEndWorkingLogDatee(Date endWorkingLogDate) {
-        this.endWorkingLogDate = endWorkingLogDate;
-        duration = ((getEndWorkingLogDate().getTime() - getStartWorkingLogDate().getTime()) / 1000);
+        if (period == null) return;
+        this.period.setFinalWorkingDate(endWorkingLogDate);
+        this.period.setDuration(calculateDuration());
     }
 
     public void setOpen(boolean open) {
@@ -60,29 +42,32 @@ public class Interval implements Serializable, Observer {
         return isOpen;
     }
 
-    public long getDuration() {
-        return duration;
+
+    public Long calculateDuration(){
+        return ((period.getFinalWorkingDate().getTime() - period.getStartWorkingDate().getTime()) / 1000);
     }
 
-    //TODO in english
-    public String getFormattedDuration() {
-        int segonsPerHora = 3600;
-        int segonsPerMinut = 60;
-
-        long durada = getDuration();
-
-        final long hores = durada / segonsPerHora;
-        final long minuts = (durada - hores * segonsPerHora) / segonsPerMinut;
-        final long segons = durada - segonsPerHora * hores - segonsPerMinut * minuts;
-
-        return String.valueOf(hores + "h " + minuts + "m " + segons + "s");
+    public Long getDuration(){
+        return period.getDuration();
     }
 
-	@Override
-	public void update(Observable o, Object date) {
-		if (isOpen){
-			this.setEndWorkingLogDatee((Date) date);
-			mCallback.update(this);
-		}
-	}
+    public Date getFinalDate(){
+        return period.getFinalWorkingDate();
+    }
+
+    public Date getInitialDate(){
+        return period.getStartWorkingDate();
+    }
+
+    @Override
+    public void update(Observable o, Object date) {
+
+        if (isOpen) {
+            this.setEndWorkingLogDatee((Date) date);
+            if (period.getDuration() != 0) {
+                mCallback.update(this);
+            }
+        }
+
+    }
 }
