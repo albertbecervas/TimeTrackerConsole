@@ -8,6 +8,11 @@ import utils.Printer;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+
 
 public class Main {
 
@@ -20,7 +25,15 @@ public class Main {
 
     private static ArrayList<Item> items; //Main items of the tree, coming from node 0
 
+    private static ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Main.class);
+	
     public static void main(String[] args) {
+    	
+    	//We set the logback filter level
+    	logger.setLevel(Level. TRACE);
+    	
+    	logger.trace("Program started");
+    	
 
         //We ask the file to return saved items
         items = ItemsTreeManager.getItems();
@@ -29,6 +42,7 @@ public class Main {
         if (items.isEmpty()) {
             items = ItemsTreeManager.setTree();
             ItemsTreeManager.saveItems(items);
+            logger.debug("There are no items, new empty tree set.");
         }
 
         //once we have loaded the list of main items we show a menu to the user and ask for an action
@@ -49,32 +63,39 @@ public class Main {
         System.out.println("Enter a number: ");
 
         int menuOption = reader.nextInt(); // Scans the next token of the input as an int.
+        logger.info("Menu option selected: " + menuOption);
 
         setMenuAction(menuOption);
-
+        
         reader.close(); //Stops scanning the console
     }
 
     private static void setMenuAction(int menuOption) {
         switch (menuOption) {
             case RUN_TEST_1:
+            	logger.debug("Inside option 1.");
                 new Printer(items); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction1();
                 break;
             case RUN_TEST_2:
+            	logger.debug("Inside option 2.");
                 //start using the class Printer in order to print the table every specified time
                 new Printer(items); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction2();
                 break;
             case RESET_TREE:
+            	logger.debug("Inside option 3.");
                 ItemsTreeManager.resetItems();
                 showMenu(); //once we've reset the items we show the menu again
                 break;
             case CREATE_PROJECT:
+            	logger.debug("Inside option 4.");
                 break;
             case CREATE_TASK:
+            	logger.debug("Inside option 5.");
                 break;
             default:
+            	logger.debug("Inside option default.");
                 new Printer(items); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction1();
                 break;
@@ -88,38 +109,51 @@ public class Main {
 
         //starting the task T3 in project P1
         ((Project) items.get(0)).startTask(1);
+        logger.info("P1/T3 started.");
 
         //waiting for three seconds before pausing T3
+        logger.trace("Staring 3 seconds sleep.");
         sleep(3000);
 
         //pause the task T3 in project P1
         ((Project) items.get(0)).stopTask(1);
+        logger.info("P1/T3 stopped.");
         ItemsTreeManager.saveItems(items);
+        logger.debug("Items saved.");
 
         //here we may have table 1.
 
         //wait for 7s until next task start
+        logger.trace("Staring 7 seconds sleep.");
         sleep(7000);
 
         //start the task T2 in subproject P2
         ((Project) ((Project) items.get(0)).getItems().get(0)).startTask(1);
+        logger.info("P1/P2/T2 started.");
 
         //wait for 10 seconds before pausing T2
+        logger.trace("Staring 10.5 seconds sleep.");
         sleep(10500);
 
         //pause the task T2 in subproject P2
         ((Project) ((Project) items.get(0)).getItems().get(0)).stopTask(1);
+        logger.info("P1/P2/T2 stopped.");
         ItemsTreeManager.saveItems(items);
+        logger.debug("Items saved.");
 
         //start T3 again
         ((Project) items.get(0)).startTask(1);
+        logger.info("P1/T3 started.");
 
         //wait 2s before pausing T3
+        logger.trace("Staring 2.1 seconds sleep.");
         sleep(2100);
 
         //pause T3
         ((Project) items.get(0)).stopTask(1);
+        logger.info("P1/T3 stopped.");
         ItemsTreeManager.saveItems(items);
+        logger.debug("Items saved.");
 
     }
 
@@ -129,53 +163,73 @@ public class Main {
     private static void simulateUserInteraction2() {
         //starting the task T3 in project P1
         ((Project) items.get(0)).startTask(1);
+        logger.info("P1/T3 started.");
 
         //waiting for 4s before starting T2
+        logger.trace("Staring 4.1 seconds sleep.");
         sleep(4100);
 
         //start the task T2 in subproject P2
         ((Project) ((Project) items.get(0)).getItems().get(0)).startTask(1);
+        logger.info("P1/P2/T2 started.");
         ItemsTreeManager.saveItems(items);
+        logger.debug("Items saved.");
 
         //waiting for 2s before pausing T3
+        logger.trace("Staring 2.1 seconds sleep.");
         sleep(2100);
 
         //pause the task T3 in project P1
         ((Project) items.get(0)).stopTask(1);
+        logger.info("P1/T3 stopped.");
         ItemsTreeManager.saveItems(items);
+        logger.debug("Items saved.");
 
         //waiting for 2s before starting T1
+        logger.trace("Staring 2.1 seconds sleep.");
         sleep(2100);
 
         //start the task T1 in subproject P2
         ((Project) ((Project) items.get(0)).getItems().get(0)).startTask(0);
+        logger.info("P1/P2/T1 started.");
 
         //wait for 4s before pausing T1
+        logger.trace("Staring 4.1 seconds sleep.");
         sleep(4100);
 
         //pause the task T1
         ((Project) ((Project) items.get(0)).getItems().get(0)).stopTask(0);
+        logger.info("P1/P2/T1 stopped.");
         ItemsTreeManager.saveItems(items);
+        logger.debug("Items saved.");
 
         //wait for 2s before pausing T2
+        logger.trace("Staring 2.1 seconds sleep.");
         sleep(2100);
 
         //pause the task T2
         ((Project) ((Project) items.get(0)).getItems().get(0)).stopTask(1);
+        logger.info("P1/P2/T2 stopped.");
         ItemsTreeManager.saveItems(items);
+        logger.debug("Items saved.");
 
         //wait for 4s before starting T3 again
+        logger.trace("Staring 4.1 seconds sleep.");
         sleep(4100);
 
         //starting T3 again
         ((Project) items.get(0)).startTask(1);
+        logger.info("P1/T3 started.");
 
         //waiting for 2s before pausing T3
+        logger.trace("Staring 2.1 seconds sleep.");
         sleep(2100);
 
         //pausing T3 and finishing the test
         ((Project) items.get(0)).stopTask(1);
+        logger.info("P1/T3 stopped.");
         ItemsTreeManager.saveItems(items);
+        logger.debug("Items saved.");
 
     }
 
@@ -189,6 +243,7 @@ public class Main {
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            logger.error("Sleep failed.");
         }
     }
 
