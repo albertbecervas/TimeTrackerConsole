@@ -2,12 +2,14 @@ package model;
 
 import callback.IntervalCallback;
 import callback.ItemCallback;
-import observable.Clock;
+import ch.qos.logback.classic.Logger;
 import utils.Constants;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+
+import org.slf4j.LoggerFactory;
 
 public class Task extends Item implements Serializable, IntervalCallback {
 
@@ -16,16 +18,23 @@ public class Task extends Item implements Serializable, IntervalCallback {
     /**
      *
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3L;
     private ArrayList<Interval> intervals;
 
     private boolean isLimited;
     private boolean isProgrammed;
     private long maxDuration;
+    
+    private static Logger logger = (Logger) LoggerFactory.getLogger(Project.class);
+
 
     public Task(String name, String description, ItemCallback taskCallback, boolean isLimited, boolean isProgrammed) {
+        logger.setLevel(Constants.LOGGER_LEVEL);
+
         this.name = name;
+        logger.debug("Task name set as: " + this.name);
         this.description = description;
+        logger.debug("Task description set as: " + this.description);
         this.period = new Period();
         this.isOpen = false;
         this.intervals = new ArrayList<>();

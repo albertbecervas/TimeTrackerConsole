@@ -4,7 +4,7 @@ import ch.qos.logback.classic.Level;
 
 public abstract class Constants {
 	//Level of the logger
-	public static final Level LOGGER_LEVEL = Level. TRACE;
+	public static final Level LOGGER_LEVEL = Level. WARN;
 	
     //Menu constants
     public static final int RUN_TEST_1 = 1;

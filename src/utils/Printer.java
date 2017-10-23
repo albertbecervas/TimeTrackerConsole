@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
 import model.Item;
 import model.Project;
 import model.Task;
@@ -13,14 +16,18 @@ import observable.Clock;
 public class Printer implements Observer {
 
     private ArrayList<Item> items;
+    
+    private static Logger logger = (Logger) LoggerFactory.getLogger(Printer.class);
 
     public Printer(ArrayList<Item> items) {
+    	logger.setLevel(Constants.LOGGER_LEVEL);
         Clock.getInstance().addObserver(this);
         this.items = items;
     }
 
     public void printTable() throws IOException {
         System.out.flush();
+        logger.trace("Printing time table.");
         print("\r \n\n TIME TABLE:\n");
         for (Item item : items) {
             recursive(item, "");
@@ -50,6 +57,7 @@ public class Printer implements Observer {
             printTable();
         } catch (IOException e) {
             // TODO Auto-generated catch block
+        	logger.error("Error printing table.");
             e.printStackTrace();
         }
 

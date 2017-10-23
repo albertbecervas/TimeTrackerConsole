@@ -10,13 +10,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Logger;
 
 
 public class Main {
 
     private static ArrayList<Item> items; //Main items of the tree, coming from node 0
 
-    private static ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Main.class);
+    private static Logger logger = (Logger) LoggerFactory.getLogger(Main.class);
 	
     public static void main(String[] args) {
     	
@@ -42,6 +43,7 @@ public class Main {
     }
 
     private static void showMenu() {
+    	logger.trace("Printing menu.");
         Scanner reader = new Scanner(System.in);  // Reading from System.in
 
         //Display menu options in the console
@@ -101,51 +103,39 @@ public class Main {
 
         //starting the task T3 in project P1
         ((Project) items.get(0)).startTask(1);
-        logger.info("P1/T3 started.");
 
         //waiting for three seconds before pausing T3
-        logger.trace("Staring 3 seconds sleep.");
         sleep(3000);
 
         //pause the task T3 in project P1
         ((Project) items.get(0)).stopTask(1);
-        logger.info("P1/T3 stopped.");
+
         ItemsTreeManager.saveItems(items);
-        logger.debug("Items saved.");
 
         //here we may have table 1.
 
         //wait for 7s until next task start
-        logger.trace("Staring 7 seconds sleep.");
         sleep(7000);
 
         //start the task T2 in subproject P2
         ((Project) ((Project) items.get(0)).getItems().get(0)).startTask(1);
-        logger.info("P1/P2/T2 started.");
 
         //wait for 10 seconds before pausing T2
-        logger.trace("Staring 10.5 seconds sleep.");
         sleep(10500);
 
         //pause the task T2 in subproject P2
         ((Project) ((Project) items.get(0)).getItems().get(0)).stopTask(1);
-        logger.info("P1/P2/T2 stopped.");
         ItemsTreeManager.saveItems(items);
-        logger.debug("Items saved.");
 
         //start T3 again
         ((Project) items.get(0)).startTask(1);
-        logger.info("P1/T3 started.");
 
         //wait 2s before pausing T3
-        logger.trace("Staring 2.1 seconds sleep.");
         sleep(2100);
 
         //pause T3
         ((Project) items.get(0)).stopTask(1);
-        logger.info("P1/T3 stopped.");
         ItemsTreeManager.saveItems(items);
-        logger.debug("Items saved.");
 
     }
 
@@ -155,73 +145,53 @@ public class Main {
     private static void simulateUserInteraction2() {
         //starting the task T3 in project P1
         ((Project) items.get(0)).startTask(1);
-        logger.info("P1/T3 started.");
 
         //waiting for 4s before starting T2
-        logger.trace("Staring 4.1 seconds sleep.");
         sleep(4100);
 
         //start the task T2 in subproject P2
         ((Project) ((Project) items.get(0)).getItems().get(0)).startTask(1);
-        logger.info("P1/P2/T2 started.");
         ItemsTreeManager.saveItems(items);
-        logger.debug("Items saved.");
 
         //waiting for 2s before pausing T3
-        logger.trace("Staring 2.1 seconds sleep.");
         sleep(2100);
 
         //pause the task T3 in project P1
         ((Project) items.get(0)).stopTask(1);
-        logger.info("P1/T3 stopped.");
         ItemsTreeManager.saveItems(items);
-        logger.debug("Items saved.");
 
         //waiting for 2s before starting T1
-        logger.trace("Staring 2.1 seconds sleep.");
         sleep(2100);
 
         //start the task T1 in subproject P2
         ((Project) ((Project) items.get(0)).getItems().get(0)).startTask(0);
-        logger.info("P1/P2/T1 started.");
 
         //wait for 4s before pausing T1
-        logger.trace("Staring 4.1 seconds sleep.");
         sleep(4100);
 
         //pause the task T1
         ((Project) ((Project) items.get(0)).getItems().get(0)).stopTask(0);
-        logger.info("P1/P2/T1 stopped.");
         ItemsTreeManager.saveItems(items);
-        logger.debug("Items saved.");
 
         //wait for 2s before pausing T2
-        logger.trace("Staring 2.1 seconds sleep.");
         sleep(2100);
 
         //pause the task T2
         ((Project) ((Project) items.get(0)).getItems().get(0)).stopTask(1);
-        logger.info("P1/P2/T2 stopped.");
         ItemsTreeManager.saveItems(items);
-        logger.debug("Items saved.");
-
+        
         //wait for 4s before starting T3 again
-        logger.trace("Staring 4.1 seconds sleep.");
         sleep(4100);
 
         //starting T3 again
         ((Project) items.get(0)).startTask(1);
-        logger.info("P1/T3 started.");
 
         //waiting for 2s before pausing T3
-        logger.trace("Staring 2.1 seconds sleep.");
         sleep(2100);
 
         //pausing T3 and finishing the test
         ((Project) items.get(0)).stopTask(1);
-        logger.info("P1/T3 stopped.");
         ItemsTreeManager.saveItems(items);
-        logger.debug("Items saved.");
 
     }
 
@@ -231,6 +201,7 @@ public class Main {
      */
     private static void sleep(int millis) {
         try {
+            logger.trace("Staring " + millis +  " milliseconds sleep.");
             Thread.sleep(millis);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block

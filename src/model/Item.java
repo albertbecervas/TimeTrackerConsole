@@ -12,9 +12,12 @@ import java.io.Serializable;
  */
 public class Item implements Serializable {
 
-    protected static final long serialVersionUID = 1L; //Needed version number in order to Serialize the object
 
-    protected String name;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	protected String name;
     protected String description;
     protected boolean isOpen;
     protected Period period;
