@@ -2,26 +2,17 @@
 
 import model.Item;
 import model.Project;
+import utils.Constants;
 import utils.ItemsTreeManager;
 import utils.Printer;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Level;
 
 
 public class Main {
-
-    //Menu constants
-    private static final int RUN_TEST_1 = 1;
-    private static final int RUN_TEST_2 = 2;
-    private static final int RESET_TREE = 3;
-    private static final int CREATE_PROJECT = 4;
-    private static final int CREATE_TASK = 5;
 
     private static ArrayList<Item> items; //Main items of the tree, coming from node 0
 
@@ -30,7 +21,7 @@ public class Main {
     public static void main(String[] args) {
     	
     	//We set the logback filter level
-    	logger.setLevel(Level. TRACE);
+    	logger.setLevel(Constants.LOGGER_LEVEL);
     	
     	logger.trace("Program started");
     	
@@ -68,30 +59,31 @@ public class Main {
         setMenuAction(menuOption);
         
         reader.close(); //Stops scanning the console
+        logger.trace("Console scanning stopped");
     }
 
     private static void setMenuAction(int menuOption) {
         switch (menuOption) {
-            case RUN_TEST_1:
+            case Constants.RUN_TEST_1:
             	logger.debug("Inside option 1.");
                 new Printer(items); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction1();
                 break;
-            case RUN_TEST_2:
+            case Constants.RUN_TEST_2:
             	logger.debug("Inside option 2.");
                 //start using the class Printer in order to print the table every specified time
                 new Printer(items); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction2();
                 break;
-            case RESET_TREE:
+            case Constants.RESET_TREE:
             	logger.debug("Inside option 3.");
                 ItemsTreeManager.resetItems();
                 showMenu(); //once we've reset the items we show the menu again
                 break;
-            case CREATE_PROJECT:
+            case Constants.CREATE_PROJECT:
             	logger.debug("Inside option 4.");
                 break;
-            case CREATE_TASK:
+            case Constants.CREATE_TASK:
             	logger.debug("Inside option 5.");
                 break;
             default:

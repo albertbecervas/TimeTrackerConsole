@@ -2,6 +2,7 @@ package model;
 
 import callback.ItemCallback;
 import observable.Clock;
+import utils.Constants;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,7 +55,7 @@ public class Project extends Item implements ItemCallback {
 
     @Override
     public void update(Item item) {
-        period.addDuration(Clock.CLOCK_SECONDS);
+        period.addDuration(Constants.CLOCK_SECONDS);
 
         if (itemCallback != null) {
             itemCallback.update(this);

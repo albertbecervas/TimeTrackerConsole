@@ -3,6 +3,7 @@ package model;
 import callback.IntervalCallback;
 import callback.ItemCallback;
 import observable.Clock;
+import utils.Constants;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -88,10 +89,10 @@ public class Task extends Item implements Serializable, IntervalCallback {
 
         if (isLimited()) {
             if (period.getDuration() <= maxDuration) {
-                period.addDuration(Clock.CLOCK_SECONDS);
+                period.addDuration(Constants.CLOCK_SECONDS);
             }
         } else {
-            period.addDuration(Clock.CLOCK_SECONDS);
+            period.addDuration(Constants.CLOCK_SECONDS);
         }
 
         mCallback.update(this);
