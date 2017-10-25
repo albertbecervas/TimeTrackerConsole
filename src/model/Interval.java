@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
-import callback.IntervalCallback;
 import observable.Clock;
 
 
@@ -16,7 +15,7 @@ public class Interval implements Serializable, Observer {
      */
     private static final long serialVersionUID = 1L;
 
-    private IntervalCallback mCallback;
+    private Task task;
 
     private Period period;
     private boolean isOpen;
@@ -24,7 +23,7 @@ public class Interval implements Serializable, Observer {
     public Interval(Task task) {
         this.period = new Period(new Date());
         this.isOpen = true;
-        this.mCallback = task;
+        this.task = task;
         Clock.getInstance().addObserver(this);
     }
 
@@ -65,7 +64,7 @@ public class Interval implements Serializable, Observer {
         if (isOpen) {
             this.setEndWorkingLogDatee((Date) date);
             if (period.getDuration() != 0) {
-                mCallback.update(this);
+                task.update(this);
             }
         }
 

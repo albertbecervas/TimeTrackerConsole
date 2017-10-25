@@ -13,7 +13,7 @@ import java.util.TimerTask;
  */
 public class Clock extends Observable {
 
-    public static final int CLOCK_SECONDS = 2; 
+    public static final int CLOCK_SECONDS = 1; 
 
     private static Clock instance = null;
 

@@ -1,16 +1,14 @@
 package model;
 
-import callback.IntervalCallback;
-import callback.ItemCallback;
 import observable.Clock;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Task extends Item implements Serializable, IntervalCallback {
+public class Task extends Item implements Serializable {
 
-    private ItemCallback mCallback;
+    private Project project;
 
     /**
      *
@@ -22,7 +20,7 @@ public class Task extends Item implements Serializable, IntervalCallback {
     private boolean isProgrammed;
     private long maxDuration;
 
-    public Task(String name, String description, ItemCallback taskCallback, boolean isLimited, boolean isProgrammed) {
+    public Task(String name, String description, Project taskCallback, boolean isLimited, boolean isProgrammed) {
         this.name = name;
         this.description = description;
         this.period = new Period();
@@ -31,9 +29,9 @@ public class Task extends Item implements Serializable, IntervalCallback {
 
         this.isLimited = isLimited;
         this.isProgrammed = isProgrammed;
-        this.maxDuration = 120L;
+        this.maxDuration = 5L;
 
-        this.mCallback = taskCallback;
+        this.project = taskCallback;
     }
 
     public void setInterval(Date startDate, Date endDate) {
@@ -72,31 +70,31 @@ public class Task extends Item implements Serializable, IntervalCallback {
     public void start() {
         if (period.getDuration() == 0) this.period.setStartWorkingDate(new Date());
         this.isOpen = true;
-        mCallback.started();
+        if (project != null) project.start();
         setInterval(new Date(), new Date());
     }
 
     public void stop() {
         this.isOpen = false;
         this.period.setFinalWorkingDate(new Date());
-        mCallback.stopped();
+        if (project != null) project.stop();
         Interval interval = this.intervals.get(intervals.size() - 1);
         interval.setOpen(false);
     }
-
-
-    @Override
-    public void update(Interval interval) {
-
+    
+    public void update(Interval interval){
         if (isLimited()) {
             if (period.getDuration() <= maxDuration) {
                 period.addDuration(Clock.CLOCK_SECONDS);
+            } else {
+            	this.stop();
             }
         } else {
             period.addDuration(Clock.CLOCK_SECONDS);
         }
 
-        mCallback.update(this);
+        if (project != null) project.update(this);
+
     }
 }
 

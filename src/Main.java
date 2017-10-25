@@ -16,6 +16,7 @@ public class Main {
     private static final int RESET_TREE = 3;
     private static final int CREATE_PROJECT = 4;
     private static final int CREATE_TASK = 5;
+    private static final int RUN_DECORATOR = 6;
 
     private static ArrayList<Item> items; //Main items of the tree, coming from node 0
 
@@ -45,6 +46,7 @@ public class Main {
         System.out.println("  3.Reset tree");
         System.out.println("  4.Create task");
         System.out.println("  5.Create project");
+        System.out.println("  6.Run decorator");
         System.out.println("Enter a number: ");
 
         int menuOption = reader.nextInt(); // Scans the next token of the input as an integer.
@@ -68,6 +70,9 @@ public class Main {
                 ItemsTreeManager.resetItems();
                 main(null); //reopen the project after the items tree is reset
                 break;
+            case RUN_DECORATOR:
+            	new Printer(runDecoratorTest());
+            	break;
             case CREATE_PROJECT:
                 break;
             case CREATE_TASK:
@@ -126,6 +131,7 @@ public class Main {
 
     }
 
+    
     /**
      * Simulates user interaction with tasks and projects in order to get through with Test2
      */
@@ -189,6 +195,14 @@ public class Main {
 
     }
 
+    private static ArrayList<Item> runDecoratorTest(){
+    	Task limmitedTask = new Task("limmitedTask", "this is a limmited time task",null,true,false);
+    	ArrayList<Item> tasks = new ArrayList<Item>();
+    	tasks.add(limmitedTask);
+    	limmitedTask.start();
+    	
+    	return tasks;
+    }
     /**
      * This function is used to sleep the thread
      * @param millis
