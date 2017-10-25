@@ -16,5 +16,9 @@ public interface ItemCallback {
      * @param item
      */
     void update(Item item);
+    
+    void started();
+    
+    void stopped();
 
 }

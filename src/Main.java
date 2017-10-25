@@ -1,6 +1,7 @@
 
 import model.Item;
 import model.Project;
+import model.Task;
 import utils.ItemsTreeManager;
 import utils.Printer;
 
@@ -82,40 +83,45 @@ public class Main {
      * Simulates user interaction with tasks and projects in order to get through with Test1
      */
     private static void simulateUserInteraction1() {
+    	
+    	Project project1 = ((Project) items.get(0)); //gets the project1 from the main items list
+    	Task task3 =(Task) project1.getItems().get(1);//gets the task3 from the project1 items list
+    	Project project2 = (Project) project1.getItems().get(0);//gets the project2 from the project1 items list
+    	Task task2 = (Task) project2.getItems().get(1);//gets the task2 from the project2 items list
 
         //starting the task T3 in project P1
-        ((Project) items.get(0)).startTask(1);
+        task3.start();
 
         //waiting for three seconds before pausing T3
         sleep(3000);
 
         //pause the task T3 in project P1
-        ((Project) items.get(0)).stopTask(1);
+        task3.stop();
         ItemsTreeManager.saveItems(items);
 
         //here we may have table 1.
-
+       
         //wait for 7s until next task start
         sleep(7000);
 
         //start the task T2 in subproject P2
-        ((Project) ((Project) items.get(0)).getItems().get(0)).startTask(1);
+        task2.start();
 
         //wait for 10 seconds before pausing T2
         sleep(10500);
 
         //pause the task T2 in subproject P2
-        ((Project) ((Project) items.get(0)).getItems().get(0)).stopTask(1);
+        task2.stop();
         ItemsTreeManager.saveItems(items);
 
         //start T3 again
-        ((Project) items.get(0)).startTask(1);
+        task3.start();
 
         //wait 2s before pausing T3
         sleep(2100);
 
         //pause T3
-        ((Project) items.get(0)).stopTask(1);
+        task3.stop();
         ItemsTreeManager.saveItems(items);
 
     }
@@ -124,54 +130,61 @@ public class Main {
      * Simulates user interaction with tasks and projects in order to get through with Test2
      */
     private static void simulateUserInteraction2() {
+    	
+    	Project project1 = ((Project) items.get(0)); //gets the project1 from the main items list
+    	Task task3 =(Task) project1.getItems().get(1);//gets the task3 from the project1 items list
+    	Project project2 = (Project) project1.getItems().get(0);//gets the project2 from the project1 items list
+    	Task task1 = (Task) project2.getItems().get(0);//gets the task1 from the project2 items list
+    	Task task2 = (Task) project2.getItems().get(1);//gets the task2 from the project2 items list
+    	
         //starting the task T3 in project P1
-        ((Project) items.get(0)).startTask(1);
+        task3.start();
 
         //waiting for 4s before starting T2
         sleep(4100);
 
         //start the task T2 in subproject P2
-        ((Project) ((Project) items.get(0)).getItems().get(0)).startTask(1);
+        task2.start();
         ItemsTreeManager.saveItems(items);
 
         //waiting for 2s before pausing T3
         sleep(2100);
 
         //pause the task T3 in project P1
-        ((Project) items.get(0)).stopTask(1);
+        task3.stop();
         ItemsTreeManager.saveItems(items);
 
         //waiting for 2s before starting T1
         sleep(2100);
 
         //start the task T1 in subproject P2
-        ((Project) ((Project) items.get(0)).getItems().get(0)).startTask(0);
+        task1.start();
 
         //wait for 4s before pausing T1
         sleep(4100);
 
         //pause the task T1
-        ((Project) ((Project) items.get(0)).getItems().get(0)).stopTask(0);
+        task1.stop();
         ItemsTreeManager.saveItems(items);
 
         //wait for 2s before pausing T2
         sleep(2100);
 
         //pause the task T2
-        ((Project) ((Project) items.get(0)).getItems().get(0)).stopTask(1);
+        task2.stop();
         ItemsTreeManager.saveItems(items);
 
         //wait for 4s before starting T3 again
         sleep(4100);
 
         //starting T3 again
-        ((Project) items.get(0)).startTask(1);
+        task3.start();
 
         //waiting for 2s before pausing T3
         sleep(2100);
 
         //pausing T3 and finishing the test
-        ((Project) items.get(0)).stopTask(1);
+        task3.stop();
         ItemsTreeManager.saveItems(items);
 
     }
