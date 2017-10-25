@@ -72,12 +72,14 @@ public class Task extends Item implements Serializable, IntervalCallback {
     public void start() {
         if (period.getDuration() == 0) this.period.setStartWorkingDate(new Date());
         this.isOpen = true;
+        mCallback.started();
         setInterval(new Date(), new Date());
     }
 
     public void stop() {
         this.isOpen = false;
         this.period.setFinalWorkingDate(new Date());
+        mCallback.stopped();
         Interval interval = this.intervals.get(intervals.size() - 1);
         interval.setOpen(false);
     }

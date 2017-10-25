@@ -42,22 +42,6 @@ public class Project extends Item implements ItemCallback {
         items.add(new Project(name, description, this));
     }
 
-    public void startTask(int position) {
-    	//The first time we start a task we set it's start working date and it will never be updated
-        if (period.getDuration() == 0) this.period.setStartWorkingDate(new Date());
-        //TODO in future, we will only be able to start a task, that's why we can cast every 
-        //selected item to Task. Otherwise it may produce an error if the item is a project
-        ((Task) items.get(position)).start(); 
-        this.isOpen = true;
-    }
-
-    public void stopTask(int position) {
-        ((Task) items.get(position)).stop();
-        this.period.setFinalWorkingDate(new Date());
-        this.isOpen = false;
-    }
-
-
     @Override
     public void update(Item item) {
         period.addDuration(Clock.CLOCK_SECONDS);
@@ -66,6 +50,20 @@ public class Project extends Item implements ItemCallback {
             itemCallback.update(this); //updating the father
         }
     }
+
+	@Override
+	public void started() {
+    	//The first time we start a task we set it's start working date and it will never be updated
+        if (period.getDuration() == 0) this.period.setStartWorkingDate(new Date());
+		this.isOpen = true;
+	}
+
+	@Override
+	public void stopped() {
+		// TODO Auto-generated method stub
+        this.period.setFinalWorkingDate(new Date());
+        this.isOpen = false;
+	}
 
 }
 
