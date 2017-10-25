@@ -1,5 +1,4 @@
 
-
 import model.Item;
 import model.Project;
 import utils.ItemsTreeManager;
@@ -7,7 +6,6 @@ import utils.Printer;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-
 
 public class Main {
 
@@ -26,7 +24,7 @@ public class Main {
         items = ItemsTreeManager.getItems();
 
         //if we don't get any items from file, we set the a new empty tree and then we save it in the file
-        if (items.isEmpty()) {
+        if (items.size() == 0) {
             items = ItemsTreeManager.setTree();
             ItemsTreeManager.saveItems(items);
         }
@@ -48,7 +46,7 @@ public class Main {
         System.out.println("  5.Create project");
         System.out.println("Enter a number: ");
 
-        int menuOption = reader.nextInt(); // Scans the next token of the input as an int.
+        int menuOption = reader.nextInt(); // Scans the next token of the input as an integer.
 
         setMenuAction(menuOption);
 
@@ -62,13 +60,12 @@ public class Main {
                 simulateUserInteraction1();
                 break;
             case RUN_TEST_2:
-                //start using the class Printer in order to print the table every specified time
                 new Printer(items); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction2();
                 break;
             case RESET_TREE:
                 ItemsTreeManager.resetItems();
-                showMenu(); //once we've reset the items we show the menu again
+                main(null); //reopen the project after the items tree is reset
                 break;
             case CREATE_PROJECT:
                 break;

@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 public class Item implements Serializable {
 
-    protected static final long serialVersionUID = 1L; //Needed version number in order to Serialize the object
+    protected static final long serialVersionUID = 1L; //Needed version number in order to Serialise the object
 
     protected String name;
     protected String description;
@@ -52,7 +52,6 @@ public class Item implements Serializable {
         this.period = period;
     }
 
-    //generic item methods
     public String getFormattedTable() {
         if (period == null) return "";
         int secondsForHour = 3600;

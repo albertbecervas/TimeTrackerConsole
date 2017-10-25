@@ -6,7 +6,11 @@ import java.util.Date;
 
 public class Period implements Serializable{
 
-    private Date startWorkingDate;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Date startWorkingDate;
     private Date finalWorkingDate;
     private long duration;
 

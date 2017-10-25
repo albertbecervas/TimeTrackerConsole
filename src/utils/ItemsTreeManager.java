@@ -16,8 +16,12 @@ import java.util.ArrayList;
  */
 public abstract class ItemsTreeManager {
 
-    private static String fileName = "itemsTree.dat";
+    private static String fileName = "itemsTree.dat"; //name of the file where the items tree is saved
 
+    /**
+     * Sets the basic given items tree in order to run the tests
+     * @return ArrayList<Item>
+     */
     public static ArrayList<Item> setTree() {
         ArrayList<Item> items = new ArrayList<Item>();
 
@@ -35,12 +39,16 @@ public abstract class ItemsTreeManager {
         return items;
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Gets the items form the specified file and puts them on ArrayList
+     * @return ArrayList<Item> 
+     */
     public static ArrayList<Item> getItems() {
         File file = new File(fileName);
 
         ArrayList<Item> items = new ArrayList<>();
 
+        //if the file doesn't exists this function will return an empty array
         if (file.exists()) {
             // read object from file
             try {
@@ -49,13 +57,16 @@ public abstract class ItemsTreeManager {
                 items = (ArrayList<Item>) in.readObject();
                 in.close();
             } catch (IOException | ClassNotFoundException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
         return items;
     }
 
+    /**
+     * Saves the items tree in a file in order to have persistence in the application
+     * @param items
+     */
     public static void saveItems(ArrayList<Item> items) {
 
         // write object to file
@@ -70,6 +81,9 @@ public abstract class ItemsTreeManager {
         }
     }
 
+    /**
+     * Deletes the file where the tree is saved
+     */
     public static void resetItems() {
         File file = new File(fileName);
         if (file.exists()) {

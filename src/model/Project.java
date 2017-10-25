@@ -8,7 +8,12 @@ import java.util.Date;
 
 public class Project extends Item implements ItemCallback {
 
-    private ItemCallback itemCallback;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private ItemCallback itemCallback;
 
     private ArrayList<Item> items;
 
@@ -18,7 +23,7 @@ public class Project extends Item implements ItemCallback {
         this.period = new Period();
         this.items = new ArrayList<Item>();
 
-        this.itemCallback = project;
+        this.itemCallback = project; //callback to update the father
     }
 
     public ArrayList<Item> getItems() {
@@ -30,18 +35,19 @@ public class Project extends Item implements ItemCallback {
     }
 
     public void newTask(String name, String description) {
-        Task task = new Task(name, description, this, false, false);
-        items.add(task);
+        items.add(new Task(name, description, this, false, false));
     }
 
     public void newProject(String name, String description) {
-        Project project = new Project(name, description, this);
-        items.add(project);
+        items.add(new Project(name, description, this));
     }
 
     public void startTask(int position) {
+    	//The first time we start a task we set it's start working date and it will never be updated
         if (period.getDuration() == 0) this.period.setStartWorkingDate(new Date());
-        ((Task) items.get(position)).start();
+        //TODO in future, we will only be able to start a task, that's why we can cast every 
+        //selected item to Task. Otherwise it may produce an error if the item is a project
+        ((Task) items.get(position)).start(); 
         this.isOpen = true;
     }
 
@@ -57,7 +63,7 @@ public class Project extends Item implements ItemCallback {
         period.addDuration(Clock.CLOCK_SECONDS);
 
         if (itemCallback != null) {
-            itemCallback.update(this);
+            itemCallback.update(this); //updating the father
         }
     }
 
