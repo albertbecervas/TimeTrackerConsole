@@ -7,10 +7,7 @@ import java.util.Date;
 
 public class Project extends Item {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;//Needed object identifier
 
 	private Project project;
 

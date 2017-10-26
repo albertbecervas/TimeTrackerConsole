@@ -10,10 +10,7 @@ import observable.Clock;
 
 public class Interval implements Serializable, Observer {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;//Needed object identifier
 
     private Task task;
 

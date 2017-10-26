@@ -10,10 +10,7 @@ public class Task extends Item implements Serializable {
 
     private Project project;
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;//Needed object identifier
     private ArrayList<Interval> intervals;
 
     private boolean isLimited;
@@ -34,7 +31,7 @@ public class Task extends Item implements Serializable {
         this.project = taskCallback;
     }
 
-    public void setInterval(Date startDate, Date endDate) {
+    public void setInterval() {
         intervals.add(new Interval(this));
     }
 
@@ -68,17 +65,17 @@ public class Task extends Item implements Serializable {
 
 
     public void start() {
-        if (period.getDuration() == 0) this.period.setStartWorkingDate(new Date());
+        if (period.getDuration() == 0) this.period.setStartWorkingDate(new Date());//The first time we start a task we set it's start working date and it will never be updated
         this.isOpen = true;
-        if (project != null) project.start();
-        setInterval(new Date(), new Date());
+        if (project != null) project.start();//We check if the task is in the main items list
+        setInterval();
     }
 
     public void stop() {
         this.isOpen = false;
-        this.period.setFinalWorkingDate(new Date());
-        if (project != null) project.stop();
-        Interval interval = this.intervals.get(intervals.size() - 1);
+        this.period.setFinalWorkingDate(new Date());//Every time we stop an item inside the project, we update the finalWorkingDate
+        if (project != null) project.stop();//We check if the task is in the main items list
+        Interval interval = this.intervals.get(intervals.size() - 1);//getting the last interval
         interval.setOpen(false);
     }
     
@@ -93,7 +90,7 @@ public class Task extends Item implements Serializable {
             period.addDuration(Clock.CLOCK_SECONDS);
         }
 
-        if (project != null) project.update(this);
+        if (project != null) project.update(this);//We check if the task is in the main items list
 
     }
 }
