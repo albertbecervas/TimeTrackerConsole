@@ -1,6 +1,6 @@
 package model;
 
-import observable.Clock;
+import utils.Constants;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,7 +8,6 @@ import java.util.Date;
 
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 public class Task extends Item implements Serializable {
@@ -25,7 +24,7 @@ public class Task extends Item implements Serializable {
     private long maxDuration;
 
     public Task(String name, String description, Project taskCallback, boolean isLimited, boolean isProgrammed) {
-    	logger.setLevel(Level. INFO);
+    	logger.setLevel(Constants.LOGGER_LEVEL);
         this.name = name;
         logger.debug("Task name set as: " + this.name);
         this.description = description;
@@ -94,12 +93,12 @@ public class Task extends Item implements Serializable {
     public void update(Interval interval){
         if (isLimited()) {
             if (period.getDuration() <= maxDuration) {
-                period.addDuration(Clock.CLOCK_SECONDS);
+                period.addDuration(Constants.CLOCK_SECONDS);
             } else {
             	this.stop();
             }
         } else {
-            period.addDuration(Clock.CLOCK_SECONDS);
+            period.addDuration(Constants.CLOCK_SECONDS);
         }
 
         if (project != null) project.update(this);//We check if the task is in the main items list

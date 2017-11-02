@@ -3,6 +3,7 @@ import model.Interval;
 import model.Item;
 import model.Project;
 import model.Task;
+import utils.Constants;
 import utils.ItemsTreeManager;
 import utils.Printer;
 
@@ -11,25 +12,18 @@ import java.util.Scanner;
 
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 public class Main {
 
     //Menu constants
-    private static final int RUN_TEST_1 = 1;
-    private static final int RUN_TEST_2 = 2;
-    private static final int RESET_TREE = 3;
-    private static final int CREATE_PROJECT = 4;
-    private static final int CREATE_TASK = 5;
-    private static final int RUN_DECORATOR = 6;
 
     private static Logger logger = (Logger) LoggerFactory.getLogger(Interval.class);
 
     private static ArrayList<Item> items; //Main items of the tree, coming from node 0
 
     public static void main(String[] args) {
-    	logger.setLevel(Level. INFO);
+    	logger.setLevel(Constants.LOGGER_LEVEL);
     	logger.info("Program started.");
 
         //We ask the file to return saved items
@@ -72,29 +66,29 @@ public class Main {
 
     private static void setMenuAction(int menuOption) {
         switch (menuOption) {
-            case RUN_TEST_1:
+            case Constants.RUN_TEST_1:
             	logger.debug("Starting test 1.");
                 new Printer(items); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction1();
                 break;
-            case RUN_TEST_2:
+            case Constants.RUN_TEST_2:
             	logger.debug("Starting test 2.");
                 new Printer(items); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction2();
                 break;
-            case RESET_TREE:
+            case Constants.RESET_TREE:
             	logger.debug("Reseting tree.");
                 ItemsTreeManager.resetItems();
                 main(null); //reopen the project after the items tree is reset
                 break;
-            case RUN_DECORATOR:
+            case Constants.RUN_DECORATOR:
             	logger.debug("Running decorator.");
             	new Printer(runDecoratorTest());
             	break;
-            case CREATE_PROJECT:
+            case Constants.CREATE_PROJECT:
             	logger.debug("Creating project.");
                 break;
-            case CREATE_TASK:
+            case Constants.CREATE_TASK:
             	logger.debug("Creating task.");
                 break;
             default:

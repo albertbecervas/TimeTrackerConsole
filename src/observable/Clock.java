@@ -7,9 +7,9 @@ import java.util.TimerTask;
 
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import model.Interval;
+import utils.Constants;
 
 /**
  * This class is used for throwing an advise to all Observers that are subscribed
@@ -21,15 +21,13 @@ public class Clock extends Observable {
 	
     private static Logger logger = (Logger) LoggerFactory.getLogger(Interval.class);
 
-    public static final int CLOCK_SECONDS = 1; 
-
     private static Clock instance = null;
 
     private Clock() {
-    	logger.setLevel(Level. INFO);
+    	logger.setLevel(Constants.LOGGER_LEVEL);
         Timer timer = new Timer();
-        timer.schedule(new Thread(this), new Date(), CLOCK_SECONDS * 1000); //schedule the time in mills.
-        logger.debug("Clock unit set as: " + CLOCK_SECONDS + " seconds.");
+        timer.schedule(new Thread(this), new Date(), Constants.CLOCK_SECONDS * 1000); //schedule the time in mills.
+        logger.debug("Clock unit set as: " + Constants.CLOCK_SECONDS + " seconds.");
     }
 
     /**

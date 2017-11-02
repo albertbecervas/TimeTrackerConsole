@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 /**
@@ -30,7 +29,7 @@ public abstract class ItemsTreeManager {
      * @return ArrayList<Item>
      */
     public static ArrayList<Item> setTree() {
-    	logger.setLevel(Level. INFO);
+    	logger.setLevel(Constants.LOGGER_LEVEL);
         ArrayList<Item> items = new ArrayList<Item>();
 
         Project project = new Project("P1", "first project from node 0", null);

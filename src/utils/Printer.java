@@ -6,7 +6,6 @@ import java.util.Observer;
 
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import model.Interval;
 import model.Item;
@@ -23,7 +22,7 @@ public class Printer implements Observer {
     private ArrayList<Item> items;
 
     public Printer(ArrayList<Item> items) {
-    	logger.setLevel(Level. INFO);
+    	logger.setLevel(Constants.LOGGER_LEVEL);
         Clock.getInstance().addObserver(this); //We need the clock in order to repeat the print of the table periodically
         this.items = items;
     }

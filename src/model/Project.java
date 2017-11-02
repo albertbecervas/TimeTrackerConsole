@@ -1,13 +1,12 @@
 package model;
 
-import observable.Clock;
+import utils.Constants;
 
 import java.util.ArrayList;
 import java.util.Date;
 
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 public class Project extends Item {
@@ -21,7 +20,7 @@ public class Project extends Item {
     private ArrayList<Item> items;
 
     public Project(String name, String description, Project project) {
-    	logger.setLevel(Level. INFO);
+    	logger.setLevel(Constants.LOGGER_LEVEL);
         this.name = name;
         logger.debug("Project name set as: " + this.name);
         this.description = description;
@@ -64,7 +63,7 @@ public class Project extends Item {
     }
     
     public void update(Item item){
-        period.addDuration(Clock.CLOCK_SECONDS);
+        period.addDuration(Constants.CLOCK_SECONDS);
 
         if (project != null) {
             project.update(this);//updating the father

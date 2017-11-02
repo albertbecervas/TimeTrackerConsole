@@ -7,9 +7,9 @@ import java.util.Observer;
 
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import observable.Clock;
+import utils.Constants;
 
 
 public class Interval implements Serializable, Observer {
@@ -24,7 +24,7 @@ public class Interval implements Serializable, Observer {
     private boolean isOpen;
 
     public Interval(Task task) {
-    	logger.setLevel(Level. INFO);
+    	logger.setLevel(Constants.LOGGER_LEVEL);
         this.period = new Period(new Date());
         this.isOpen = true;
         this.task = task;
