@@ -6,9 +6,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+
 public class Task extends Item implements Serializable {
 
     private Project project;
+    
+    private static Logger logger = (Logger) LoggerFactory.getLogger(Interval.class);
 
     private static final long serialVersionUID = 1L;//Needed object identifier
     private ArrayList<Interval> intervals;
@@ -18,8 +25,11 @@ public class Task extends Item implements Serializable {
     private long maxDuration;
 
     public Task(String name, String description, Project taskCallback, boolean isLimited, boolean isProgrammed) {
+    	logger.setLevel(Level. INFO);
         this.name = name;
+        logger.debug("Task name set as: " + this.name);
         this.description = description;
+        logger.debug("Task description set as: " + this.description);
         this.period = new Period();
         this.isOpen = false;
         this.intervals = new ArrayList<>();
@@ -69,6 +79,7 @@ public class Task extends Item implements Serializable {
         this.isOpen = true;
         if (project != null) project.start();//We check if the task is in the main items list
         setInterval();
+        logger.trace("Task " + this.getName() + " started.");
     }
 
     public void stop() {
@@ -77,6 +88,7 @@ public class Task extends Item implements Serializable {
         if (project != null) project.stop();//We check if the task is in the main items list
         Interval interval = this.intervals.get(intervals.size() - 1);//getting the last interval
         interval.setOpen(false);
+        logger.trace("Task " + this.getName() + " stopped.");
     }
     
     public void update(Interval interval){

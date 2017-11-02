@@ -1,4 +1,5 @@
 
+import model.Interval;
 import model.Item;
 import model.Project;
 import model.Task;
@@ -7,6 +8,11 @@ import utils.Printer;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 
 public class Main {
 
@@ -18,9 +24,13 @@ public class Main {
     private static final int CREATE_TASK = 5;
     private static final int RUN_DECORATOR = 6;
 
+    private static Logger logger = (Logger) LoggerFactory.getLogger(Interval.class);
+
     private static ArrayList<Item> items; //Main items of the tree, coming from node 0
 
     public static void main(String[] args) {
+    	logger.setLevel(Level. INFO);
+    	logger.info("Program started.");
 
         //We ask the file to return saved items
         items = ItemsTreeManager.getItems();
@@ -29,6 +39,7 @@ public class Main {
         if (items.size() == 0) {
             items = ItemsTreeManager.setTree();
             ItemsTreeManager.saveItems(items);
+            logger.debug("There are no items, new empty tree set.");
         }
 
         //once we have loaded the list of main items we show a menu to the user and ask for an action
@@ -37,6 +48,7 @@ public class Main {
     }
 
     private static void showMenu() {
+    	logger.trace("Printing menu.");
         Scanner reader = new Scanner(System.in);  // Reading from System.in
 
         //Display menu options in the console
@@ -50,34 +62,43 @@ public class Main {
         System.out.println("Enter a number: ");
 
         int menuOption = reader.nextInt(); // Scans the next token of the input as an integer.
+        logger.info("Menu option selected: " + menuOption);
 
         setMenuAction(menuOption);
 
         reader.close(); //Stops scanning the console
+        logger.trace("Console scanning stopped.");
     }
 
     private static void setMenuAction(int menuOption) {
         switch (menuOption) {
             case RUN_TEST_1:
+            	logger.debug("Starting test 1.");
                 new Printer(items); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction1();
                 break;
             case RUN_TEST_2:
+            	logger.debug("Starting test 2.");
                 new Printer(items); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction2();
                 break;
             case RESET_TREE:
+            	logger.debug("Reseting tree.");
                 ItemsTreeManager.resetItems();
                 main(null); //reopen the project after the items tree is reset
                 break;
             case RUN_DECORATOR:
+            	logger.debug("Running decorator.");
             	new Printer(runDecoratorTest());
             	break;
             case CREATE_PROJECT:
+            	logger.debug("Creating project.");
                 break;
             case CREATE_TASK:
+            	logger.debug("Creating task.");
                 break;
             default:
+            	logger.info("This option does not exist.");
                 new Printer(items); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction1();
                 break;
@@ -209,10 +230,12 @@ public class Main {
      */
     private static void sleep(int millis) {
         try {
+        	logger.trace("Starting " + millis + " milliseconds sleep.");
             Thread.sleep(millis);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Sleep failed.");
+        	e.printStackTrace();
         }
     }
 

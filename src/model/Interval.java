@@ -5,12 +5,18 @@ import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import observable.Clock;
 
 
 public class Interval implements Serializable, Observer {
 
     private static final long serialVersionUID = 1L;//Needed object identifier
+    
+    private static Logger logger = (Logger) LoggerFactory.getLogger(Interval.class);
 
     private Task task;
 
@@ -18,20 +24,26 @@ public class Interval implements Serializable, Observer {
     private boolean isOpen;
 
     public Interval(Task task) {
+    	logger.setLevel(Level. INFO);
         this.period = new Period(new Date());
         this.isOpen = true;
         this.task = task;
         Clock.getInstance().addObserver(this);
+        logger.debug("Task " + task.name + "'s interval started.");
     }
 
     public void setEndWorkingLogDatee(Date endWorkingLogDate) {
-        if (period == null) return;
+        if (period == null) {
+        	logger.warn("Trying to set an end working date to a null period.");
+        	return;
+        }
         this.period.setFinalWorkingDate(endWorkingLogDate);
         this.period.setDuration(calculateDuration());
     }
 
     public void setOpen(boolean open) {
         this.isOpen = open;
+        logger.debug("Inteval set as open?:" + this.isOpen);
     }
 
     public boolean isOpen() {
@@ -40,7 +52,9 @@ public class Interval implements Serializable, Observer {
 
 
     public Long calculateDuration(){
-        return ((period.getFinalWorkingDate().getTime() - period.getStartWorkingDate().getTime()) / 1000);
+    	Long duration = ((period.getFinalWorkingDate().getTime() - period.getStartWorkingDate().getTime()) / 1000);
+    	logger.debug("Interval's duration calculated: " + duration);
+        return duration;
     }
 
     public Long getDuration(){
@@ -62,6 +76,7 @@ public class Interval implements Serializable, Observer {
             this.setEndWorkingLogDatee((Date) date);
             if (period.getDuration() != 0) {
                 task.update(this);
+                logger.trace("Task updated.");
             }
         }
 

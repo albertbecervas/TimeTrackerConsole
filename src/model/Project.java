@@ -5,17 +5,27 @@ import observable.Clock;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+
 public class Project extends Item {
 
 	private static final long serialVersionUID = 1L;//Needed object identifier
+
+	private static Logger logger = (Logger) LoggerFactory.getLogger(Interval.class);
 
 	private Project project;
 
     private ArrayList<Item> items;
 
     public Project(String name, String description, Project project) {
+    	logger.setLevel(Level. INFO);
         this.name = name;
+        logger.debug("Project name set as: " + this.name);
         this.description = description;
+        logger.debug("Project description set as: " + this.description);
         this.period = new Period();
         this.items = new ArrayList<Item>();
 
@@ -28,14 +38,17 @@ public class Project extends Item {
 
     public void setItems(ArrayList<Item> items) {
         this.items = items;
+        logger.debug("Project " + this.getName() + "'s items set as: " + items);
     }
 
     public void newTask(String name, String description) {
         items.add(new Task(name, description, this, false, false));
+        logger.debug("Task " + name + " added to project " + this.getName());
     }
 
     public void newProject(String name, String description) {
         items.add(new Project(name, description, this));
+        logger.debug("Project " + name + " added to project " + this.getName());
     }
     
     public void start(){
