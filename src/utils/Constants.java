@@ -4,7 +4,7 @@ import ch.qos.logback.classic.Level;
 
 public abstract class Constants {
 	
-	public static final Level LOGGER_LEVEL = Level. WARN;
+	public static final Level LOGGER_LEVEL = Level. TRACE;
 	
 	public static final int CLOCK_SECONDS = 2;
 	
