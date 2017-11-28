@@ -18,7 +18,7 @@ public class Interval implements Serializable, Observer {
     private boolean isOpen;
 
     public Interval(Task task) {
-        this.period = new Period(new Date());
+        this.period = new Period();
         this.isOpen = true;
         this.task = task;
         Clock.getInstance().addObserver(this);

@@ -13,20 +13,12 @@ public class Task extends Item implements Serializable {
     private static final long serialVersionUID = 1L;//Needed object identifier
     private ArrayList<Interval> intervals;
 
-    private boolean isLimited;
-    private boolean isProgrammed;
-    private long maxDuration;
-
-    public Task(String name, String description, Project taskCallback, boolean isLimited, boolean isProgrammed) {
+    public Task(String name, String description, Project taskCallback) {
         this.name = name;
         this.description = description;
         this.period = new Period();
         this.isOpen = false;
         this.intervals = new ArrayList<>();
-
-        this.isLimited = isLimited;
-        this.isProgrammed = isProgrammed;
-        this.maxDuration = 5L;
 
         this.project = taskCallback;
     }
@@ -38,31 +30,6 @@ public class Task extends Item implements Serializable {
     public ArrayList<Interval> getIntervals() {
         return intervals;
     }
-
-    public boolean isLimited() {
-        return isLimited;
-    }
-
-    public void setLimited(boolean limited) {
-        isLimited = limited;
-    }
-
-    public boolean isProgrammed() {
-        return isProgrammed;
-    }
-
-    public void setProgrammed(boolean programmed) {
-        isProgrammed = programmed;
-    }
-
-    public long getMaxDuration() {
-        return maxDuration;
-    }
-
-    public void setMaxDuration(long maxDuration) {
-        this.maxDuration = maxDuration;
-    }
-
 
     public void start() {
         if (period.getDuration() == 0) this.period.setStartWorkingDate(new Date());//The first time we start a task we set it's start working date and it will never be updated
@@ -80,19 +47,10 @@ public class Task extends Item implements Serializable {
     }
     
     public void update(Interval interval){
-        if (isLimited()) {
-            if (period.getDuration() <= maxDuration) {
-                period.addDuration(Clock.CLOCK_SECONDS);
-            } else {
-            	this.stop();
-            }
-        } else {
-            period.addDuration(Clock.CLOCK_SECONDS);
-        }
-
+        period.addDuration(Clock.CLOCK_SECONDS);
         if (project != null) project.update(this);//We check if the task is in the main items list
-
     }
+
 }
 
 

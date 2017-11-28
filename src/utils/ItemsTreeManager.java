@@ -2,6 +2,7 @@ package utils;
 
 import model.Item;
 import model.Project;
+import model.Task;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,6 +38,24 @@ public abstract class ItemsTreeManager {
         items.add(project);
 
         return items;
+    }
+    
+    public static ArrayList<Item> setTree2() {
+        ArrayList<Item> items = new ArrayList<Item>();
+    	
+    	Project p1 = new Project("P1","p1",null);
+    	p1.newProject("P1.2"," subproject from p1");
+    	p1.newTask("T1","task from p1");
+    	p1.newTask("T2","task from p1");
+    	
+    	((Project) p1.getItems().get(0)).newTask("T4","task from p1.2");
+    	    	
+    	Project p2 = new Project("P2","p2",null);
+    	p2.newTask("T3","task from p2");
+    	
+    	items.add(p1);
+    	items.add(p2);
+    	return items;
     }
 
     /**

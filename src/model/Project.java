@@ -9,6 +9,7 @@ public class Project extends Item {
 
 	private static final long serialVersionUID = 1L;//Needed object identifier
 
+	//father project
 	private Project project;
 
     private ArrayList<Item> items;
@@ -31,7 +32,7 @@ public class Project extends Item {
     }
 
     public void newTask(String name, String description) {
-        items.add(new Task(name, description, this, false, false));
+        items.add(new Task(name, description, this));
     }
 
     public void newProject(String name, String description) {

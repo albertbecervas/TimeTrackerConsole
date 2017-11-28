@@ -4,6 +4,11 @@ package model;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @invariant duration >=0
+ * @author Albert
+ *
+ */
 public class Period implements Serializable{
 
     /**
@@ -14,13 +19,9 @@ public class Period implements Serializable{
     private Date finalWorkingDate;
     private long duration;
 
-    public Period() {
+    public Period(){
         duration = 0L;
-    }
-
-    public Period(Date startWorkingDate){
-        duration = 0L;
-        this.startWorkingDate = startWorkingDate;
+        this.startWorkingDate = new Date();
     }
 
     public Date getStartWorkingDate() {

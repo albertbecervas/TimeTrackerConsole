@@ -60,12 +60,12 @@ public class Item implements Serializable {
         final long hours = period.getDuration() / secondsForHour;
         final long minuts = (period.getDuration() - hours * secondsForHour) / secondsForMinut;
         final long seconds = period.getDuration() - secondsForHour * hours - secondsForMinut * minuts;
-
+				
         return String.valueOf(getName() + " ---> "
                 + "duration = " + String.valueOf(hours + "h " + minuts + "m " + seconds + "s")) + " |"
                 + "from: " + period.getStartWorkingDate() + " | "
                 + "to: " + period.getFinalWorkingDate() + " |\n ";
-
+        
     }
 }
 

@@ -6,6 +6,7 @@ import utils.ItemsTreeManager;
 import utils.Printer;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Main {
@@ -16,21 +17,28 @@ public class Main {
     private static final int RESET_TREE = 3;
     private static final int CREATE_PROJECT = 4;
     private static final int CREATE_TASK = 5;
-    private static final int RUN_DECORATOR = 6;
+    private static final int GENERATE_BRIEF_REPORT = 7;
 
     private static ArrayList<Item> items; //Main items of the tree, coming from node 0
 
     public static void main(String[] args) {
 
         //We ask the file to return saved items
-        items = ItemsTreeManager.getItems();
+        //items = ItemsTreeManager.getItems();
 
         //if we don't get any items from file, we set the a new empty tree and then we save it in the file
-        if (items.size() == 0) {
+        /*if (items.size() == 0) {
             items = ItemsTreeManager.setTree();
             ItemsTreeManager.saveItems(items);
-        }
+        }*/
 
+    	items = ItemsTreeManager.getItems();
+
+        if (items.size() == 0) {
+        	items = ItemsTreeManager.setTree2();
+        	ItemsTreeManager.saveItems(items);
+        }
+    	
         //once we have loaded the list of main items we show a menu to the user and ask for an action
         showMenu();
 
@@ -47,47 +55,101 @@ public class Main {
         System.out.println("  4.Create task");
         System.out.println("  5.Create project");
         System.out.println("  6.Run decorator");
+        System.out.println("  7.Generate Detailed Report");
         System.out.println("Enter a number: ");
 
         int menuOption = reader.nextInt(); // Scans the next token of the input as an integer.
 
         setMenuAction(menuOption);
-
+        
         reader.close(); //Stops scanning the console
     }
 
     private static void setMenuAction(int menuOption) {
         switch (menuOption) {
             case RUN_TEST_1:
-                new Printer(items); //start using the class Printer in order to print the table periodically
-                simulateUserInteraction1();
+                /*new Printer(items).printTable(); //start using the class Printer in order to print the table periodically
+                simulateUserInteraction1();*/
+            	generateBriefReport();
+            	showMenu();
                 break;
             case RUN_TEST_2:
-                new Printer(items); //start using the class Printer in order to print the table periodically
+                new Printer(items).printTable(); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction2();
                 break;
             case RESET_TREE:
                 ItemsTreeManager.resetItems();
                 main(null); //reopen the project after the items tree is reset
                 break;
-            case RUN_DECORATOR:
-            	new Printer(runDecoratorTest());
-            	break;
             case CREATE_PROJECT:
                 break;
             case CREATE_TASK:
                 break;
+            case GENERATE_BRIEF_REPORT:
+            	//generateBriefReport();
+            	new Printer(items).generateBriefReport();
+            	break;
             default:
                 new Printer(items); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction1();
                 break;
         }
     }
+    
+    /**
+     * Generates a brief report
+     */
+    private static void generateBriefReport(){
+    	Project p1 = ((Project) items.get(0)); //gets the project1 from the main items list
+    	Project p12 = (Project) p1.getItems().get(0);
+    	Task t1 =(Task) p1.getItems().get(1);//gets the task1 from the project1 items list
+    	Task t2 =(Task) p1.getItems().get(2);//gets the task2 from the project1 items list
+    	Task t4 = (Task) p12.getItems().get(0);
+    	
+    	Project p2 = ((Project) items.get(1));
+    	Task t3 = (Task) p2.getItems().get(0);
+    	
+    	System.out.print(new Date().toString());
+    	
+    	
+    	//start tasks 1 and 4 and wait 4 seconds
+    	t1.start();
+    	t4.start();
+    	sleep(4000);
+    	
+    	//stop t1 and start t2 and wait 6 seconds
+    	t1.stop();
+    	t2.start();
+    	sleep(6000);
+    	
+    	//stop t2 and t4, start t3 and wait 4 seconds
+    	t2.stop();
+    	t4.stop();
+    	t3.start();
+    	sleep(4000);
+    	
+    	//stop t3 and start t2 again. Wait 2 seconds
+    	t3.stop();
+    	t2.start();
+    	sleep(2000);
+    	
+    	//start t3 again and wait 4 seconds 
+    	t3.start();
+    	sleep(4000);
+    	
+    	//stop t3 and t2.
+    	t3.stop();
+    	t2.stop();
+    	
+    	System.out.print(new Date().toString());
+    	
+        ItemsTreeManager.saveItems(items);
+    }
 
     /**
      * Simulates user interaction with tasks and projects in order to get through with Test1
      */
-    private static void simulateUserInteraction1() {
+     private static void simulateUserInteraction1() {
     	
     	Project project1 = ((Project) items.get(0)); //gets the project1 from the main items list
     	Task task3 =(Task) project1.getItems().get(1);//gets the task3 from the project1 items list
@@ -195,14 +257,6 @@ public class Main {
 
     }
 
-    private static ArrayList<Item> runDecoratorTest(){
-    	Task limmitedTask = new Task("limmitedTask", "this is a limmited time task",null,true,false);
-    	ArrayList<Item> tasks = new ArrayList<Item>();
-    	tasks.add(limmitedTask);
-    	limmitedTask.start();
-    	
-    	return tasks;
-    }
     /**
      * This function is used to sleep the thread
      * @param millis
