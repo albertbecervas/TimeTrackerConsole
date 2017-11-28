@@ -32,13 +32,15 @@ public class Task extends Item implements Serializable {
     }
 
     public void start() {
+    	assert period != null : "Null period.";
         if (period.getDuration() == 0) this.period.setStartWorkingDate(new Date());//The first time we start a task we set it's start working date and it will never be updated
         this.isOpen = true;
-        if (project != null) project.start();//We check if the task is in the main items list
+        if (project != null) project.start(); //We check if the task is in the main items list
         setInterval();
     }
 
     public void stop() {
+    	assert period != null : "Null period.";
         this.isOpen = false;
         this.period.setFinalWorkingDate(new Date());//Every time we stop an item inside the project, we update the finalWorkingDate
         if (project != null) project.stop();//We check if the task is in the main items list

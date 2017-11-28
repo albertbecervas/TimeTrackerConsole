@@ -8,17 +8,17 @@ public class TaskReportDetail {
 	String initialDate;
 	String finalDate;
 	
-    int secondsForHour = 3600;
-    int secondsForMinut = 60;
+    int secondsPerHour = 3600;
+    int secondsPerMinute = 60;
 	
 	public TaskReportDetail(Task task, long duration, String initial, String finalDate){
 		this.task = task;
 		this.initialDate = initial;
 		this.finalDate = finalDate;
 		
-        final long hours = duration / secondsForHour;
-        final long minuts = (duration - hours * secondsForHour) / secondsForMinut;
-        final long seconds = duration - secondsForHour * hours - secondsForMinut * minuts;
+        final long hours = duration / secondsPerHour;
+        final long minuts = (duration - hours * secondsPerHour) / secondsPerMinute;
+        final long seconds = duration - secondsPerHour * hours - secondsPerMinute * minuts;
         String formattedDuration = String.valueOf(hours + "h " + minuts + "m " + seconds + "s");
         this.duration = formattedDuration;
 	}

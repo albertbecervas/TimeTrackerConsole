@@ -24,8 +24,8 @@ public class Interval implements Serializable, Observer {
         Clock.getInstance().addObserver(this);
     }
 
-    public void setEndWorkingLogDatee(Date endWorkingLogDate) {
-        if (period == null) return;
+    public void setEndWorkingLogDate(Date endWorkingLogDate) {
+    	assert period != null : "Null period.";
         this.period.setFinalWorkingDate(endWorkingLogDate);
         this.period.setDuration(calculateDuration());
     }
@@ -39,19 +39,25 @@ public class Interval implements Serializable, Observer {
     }
 
 
-    public Long calculateDuration(){
-        return ((period.getFinalWorkingDate().getTime() - period.getStartWorkingDate().getTime()) / 1000);
+    private Long calculateDuration(){
+    	Long duration = ((period.getFinalWorkingDate().getTime() - period.getStartWorkingDate().getTime()) / 1000);
+    	assert duration >= 0 : "Duration smaller than 0: " + duration; 
+        return duration;
     }
 
     public Long getDuration(){
+    	assert period != null : "Null period.";
         return period.getDuration();
     }
 
     public Date getFinalDate(){
+    	assert period != null : "Null period.";
         return period.getFinalWorkingDate();
     }
 
     public Date getInitialDate(){
+    	assert period != null : "Null period.";
+    	assert period.getStartWorkingDate() instanceof Date : "Not an instance of Date.";
         return period.getStartWorkingDate();
     }
 
@@ -59,7 +65,7 @@ public class Interval implements Serializable, Observer {
     public void update(Observable o, Object date) {
 
         if (isOpen) {
-            this.setEndWorkingLogDatee((Date) date);
+            this.setEndWorkingLogDate((Date) date);
             if (period.getDuration() != 0) {
                 task.update(this);
             }

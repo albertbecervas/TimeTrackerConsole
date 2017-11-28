@@ -41,6 +41,7 @@ public class Project extends Item {
     
     public void start(){
     	//The first time we start a task we set it's start working date and it will never be updated
+    	assert period != null : "Null period.";
         if (period.getDuration() == 0) this.period.setStartWorkingDate(new Date());
 		this.isOpen = true;
     }
@@ -53,10 +54,8 @@ public class Project extends Item {
     
     public void update(Item item){
         period.addDuration(Clock.CLOCK_SECONDS);
-
-        if (project != null) {
-            project.update(this);//updating the father
-        }
+        if (project != null) project.update(this);//updating the father
+        
     }
 }
 

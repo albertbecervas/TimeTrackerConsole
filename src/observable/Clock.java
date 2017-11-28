@@ -27,7 +27,8 @@ public class Clock extends Observable {
      * @return Clock
      */
     public static Clock getInstance() {
-        if (instance == null) return new Clock();
+        if (instance == null) instance = new Clock();
+        assert instance instanceof Clock : "Not an instance of clock";
         return instance;
     }
 
