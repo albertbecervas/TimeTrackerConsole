@@ -1,7 +1,11 @@
 
+
+
 import model.Item;
 import model.Project;
 import model.Task;
+import reports.BriefReport;
+import reports.DetailedReport;
 import utils.ItemsTreeManager;
 import utils.Printer;
 
@@ -15,9 +19,9 @@ public class Main {
     private static final int RUN_TEST_1 = 1;
     private static final int RUN_TEST_2 = 2;
     private static final int RESET_TREE = 3;
-    private static final int CREATE_PROJECT = 4;
-    private static final int CREATE_TASK = 5;
-    private static final int GENERATE_BRIEF_REPORT = 7;
+    private static final int RUN_TEST_3 = 4;
+    private static final int GENERATE_DETAILED_REPORT = 5;
+    private static final int GENERATE_BRIEF_REPORT = 6;
 
     private static ArrayList<Item> items; //Main items of the tree, coming from node 0
 
@@ -32,13 +36,13 @@ public class Main {
             ItemsTreeManager.saveItems(items);
         }*/
 
-    	items = ItemsTreeManager.getItems();
+        items = ItemsTreeManager.getItems();
 
         if (items.size() == 0) {
-        	items = ItemsTreeManager.setTree2();
-        	ItemsTreeManager.saveItems(items);
+            items = ItemsTreeManager.setTree2();
+            ItemsTreeManager.saveItems(items);
         }
-    	
+
         //once we have loaded the list of main items we show a menu to the user and ask for an action
         showMenu();
 
@@ -52,26 +56,23 @@ public class Main {
         System.out.println("  1.Run task test");
         System.out.println("  2.Run simultaneous tasks test");
         System.out.println("  3.Reset tree");
-        System.out.println("  4.Create task");
-        System.out.println("  5.Create project");
-        System.out.println("  6.Run decorator");
-        System.out.println("  7.Generate Detailed Report");
+        System.out.println("  4.Run test fita 2");
+        System.out.println("  5.Generate Detailed Report");
+        System.out.println("  6.Generate Brief Report");
         System.out.println("Enter a number: ");
 
         int menuOption = reader.nextInt(); // Scans the next token of the input as an integer.
 
         setMenuAction(menuOption);
-        
+
         reader.close(); //Stops scanning the console
     }
 
     private static void setMenuAction(int menuOption) {
         switch (menuOption) {
             case RUN_TEST_1:
-                /*new Printer(items).printTable(); //start using the class Printer in order to print the table periodically
-                simulateUserInteraction1();*/
-            	generateBriefReport();
-            	showMenu();
+                new Printer(items).printTable(); //start using the class Printer in order to print the table periodically
+                simulateUserInteraction1();
                 break;
             case RUN_TEST_2:
                 new Printer(items).printTable(); //start using the class Printer in order to print the table periodically
@@ -81,80 +82,86 @@ public class Main {
                 ItemsTreeManager.resetItems();
                 main(null); //reopen the project after the items tree is reset
                 break;
-            case CREATE_PROJECT:
+            case RUN_TEST_3:
+                generateBriefReport();
+                showMenu();
                 break;
-            case CREATE_TASK:
+            case GENERATE_DETAILED_REPORT:
+                DetailedReport dReport = new DetailedReport(items,"html");
+                dReport.generateDetailedReport();
+                showMenu();
                 break;
             case GENERATE_BRIEF_REPORT:
-            	//generateBriefReport();
-            	new Printer(items).generateBriefReport();
-            	break;
+                BriefReport report = new BriefReport(items,"txt");
+                report.generateBriefReport();
+                showMenu();
+                break;
             default:
                 new Printer(items); //start using the class Printer in order to print the table periodically
                 simulateUserInteraction1();
                 break;
         }
     }
-    
+
     /**
-     * Generates a brief report
+     * Generates a report
      */
-    private static void generateBriefReport(){
-    	Project p1 = ((Project) items.get(0)); //gets the project1 from the main items list
-    	Project p12 = (Project) p1.getItems().get(0);
-    	Task t1 =(Task) p1.getItems().get(1);//gets the task1 from the project1 items list
-    	Task t2 =(Task) p1.getItems().get(2);//gets the task2 from the project1 items list
-    	Task t4 = (Task) p12.getItems().get(0);
-    	
-    	Project p2 = ((Project) items.get(1));
-    	Task t3 = (Task) p2.getItems().get(0);
-    	
-    	System.out.print(new Date().toString());
-    	
-    	
-    	//start tasks 1 and 4 and wait 4 seconds
-    	t1.start();
-    	t4.start();
-    	sleep(4000);
-    	
-    	//stop t1 and start t2 and wait 6 seconds
-    	t1.stop();
-    	t2.start();
-    	sleep(6000);
-    	
-    	//stop t2 and t4, start t3 and wait 4 seconds
-    	t2.stop();
-    	t4.stop();
-    	t3.start();
-    	sleep(4000);
-    	
-    	//stop t3 and start t2 again. Wait 2 seconds
-    	t3.stop();
-    	t2.start();
-    	sleep(2000);
-    	
-    	//start t3 again and wait 4 seconds 
-    	t3.start();
-    	sleep(4000);
-    	
-    	//stop t3 and t2.
-    	t3.stop();
-    	t2.stop();
-    	
-    	System.out.print(new Date().toString());
-    	
+    private static void generateBriefReport() {
+        Project p1 = ((Project) items.get(0)); //gets the project1 from the main items list
+        Project p12 = (Project) p1.getItems().get(0);
+        Task t1 = (Task) p1.getItems().get(1);//gets the task1 from the project1 items list
+        Task t2 = (Task) p1.getItems().get(2);//gets the task2 from the project1 items list
+        Task t4 = (Task) p12.getItems().get(0);
+
+        Project p2 = ((Project) items.get(1));
+        Task t3 = (Task) p2.getItems().get(0);
+
+        System.out.print(new Date().toString());
+
+
+        //start tasks 1 and 4 and wait 4 seconds
+        t1.start();
+        t4.start();
+        sleep(4000);
+
+        //stop t1 and start t2 and wait 6 seconds
+        t1.stop();
+        t2.start();
+        sleep(6000);
+
+        //stop t2 and t4, start t3 and wait 4 seconds
+        t2.stop();
+        t4.stop();
+        t3.start();
+        sleep(4000);
+
+        //stop t3 and start t2 again. Wait 2 seconds
+        t3.stop();
+        t2.start();
+        sleep(2000);
+
+        //start t3 again and wait 4 seconds
+        t3.start();
+        sleep(4000);
+
+        //stop t3 and t2.
+        t3.stop();
+        t2.stop();
+
+        System.out.print(new Date().toString());
+
         ItemsTreeManager.saveItems(items);
     }
 
     /**
      * Simulates user interaction with tasks and projects in order to get through with Test1
      */
-     private static void simulateUserInteraction1() {
-    	
-    	Project project1 = ((Project) items.get(0)); //gets the project1 from the main items list
-    	Task task3 =(Task) project1.getItems().get(1);//gets the task3 from the project1 items list
-    	Project project2 = (Project) project1.getItems().get(0);//gets the project2 from the project1 items list
-    	Task task2 = (Task) project2.getItems().get(1);//gets the task2 from the project2 items list
+    private static void simulateUserInteraction1() {
+
+        Project project1 = ((Project) items.get(0)); //gets the project1 from the main items list
+        Task task3 = (Task) project1.getItems().get(1);//gets the task3 from the project1 items list
+        Project project2 = (Project) project1.getItems().get(0);//gets the project2 from the project1 items list
+        Task task2 = (Task) project2.getItems().get(1);//gets the task2 from the project2 items list
 
         //starting the task T3 in project P1
         task3.start();
@@ -167,7 +174,7 @@ public class Main {
         ItemsTreeManager.saveItems(items);
 
         //here we may have table 1.
-       
+
         //wait for 7s until next task start
         sleep(7000);
 
@@ -193,18 +200,18 @@ public class Main {
 
     }
 
-    
+
     /**
      * Simulates user interaction with tasks and projects in order to get through with Test2
      */
     private static void simulateUserInteraction2() {
-    	
-    	Project project1 = ((Project) items.get(0)); //gets the project1 from the main items list
-    	Task task3 =(Task) project1.getItems().get(1);//gets the task3 from the project1 items list
-    	Project project2 = (Project) project1.getItems().get(0);//gets the project2 from the project1 items list
-    	Task task1 = (Task) project2.getItems().get(0);//gets the task1 from the project2 items list
-    	Task task2 = (Task) project2.getItems().get(1);//gets the task2 from the project2 items list
-    	
+
+        Project project1 = ((Project) items.get(0)); //gets the project1 from the main items list
+        Task task3 = (Task) project1.getItems().get(1);//gets the task3 from the project1 items list
+        Project project2 = (Project) project1.getItems().get(0);//gets the project2 from the project1 items list
+        Task task1 = (Task) project2.getItems().get(0);//gets the task1 from the project2 items list
+        Task task2 = (Task) project2.getItems().get(1);//gets the task2 from the project2 items list
+
         //starting the task T3 in project P1
         task3.start();
 
@@ -259,7 +266,8 @@ public class Main {
 
     /**
      * This function is used to sleep the thread
-     * @param millis
+     *
+     * @param millis millis
      */
     private static void sleep(int millis) {
         try {

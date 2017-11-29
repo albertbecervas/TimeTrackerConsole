@@ -2,7 +2,6 @@ package utils;
 
 import model.Item;
 import model.Project;
-import model.Task;
 
 import java.io.File;
 import java.io.FileInputStream;

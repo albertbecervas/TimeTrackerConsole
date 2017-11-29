@@ -1,11 +1,12 @@
 package model;
 
+import observable.Clock;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
-import observable.Clock;
 
 
 public class Interval implements Serializable, Observer {
@@ -38,8 +39,7 @@ public class Interval implements Serializable, Observer {
         return isOpen;
     }
 
-
-    public Long calculateDuration(){
+    private Long calculateDuration(){
         return ((period.getFinalWorkingDate().getTime() - period.getStartWorkingDate().getTime()) / 1000);
     }
 
