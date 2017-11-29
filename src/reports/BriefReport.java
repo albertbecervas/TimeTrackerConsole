@@ -17,7 +17,6 @@ import format.TextFormatPrinter;
 /**
  * Generates a Brief report of the main items that shows: Duration, initial date, final date
  * and name of every item
- * @author Albert
  *
  */
 public class BriefReport extends Report {
@@ -26,7 +25,7 @@ public class BriefReport extends Report {
 
     private long duration = 0;
         
-    public BriefReport(ArrayList<Item> items, String format) {
+    public BriefReport(ArrayList<Item> items, String format) throws IllegalArgumentException{
         this.items = items;
         
         mainItems = new ArrayList<ItemReportDetail>();
@@ -39,13 +38,15 @@ public class BriefReport extends Report {
     /**
      * Sets the format of the file that will be generated
      */
-    private void setFormat(String format){
+    private void setFormat(String format) throws IllegalArgumentException{
+    	if (format != "txt" && format != "html") throw new IllegalArgumentException("Invalid value for format.");
     	switch(format){
     	case "txt":
         	this.format = new TextFormatPrinter();
         	break;
     	case "html":
     		this.format = new HtmlFormatPrinter();
+    		break;
     	}
     }
     
@@ -53,11 +54,15 @@ public class BriefReport extends Report {
     public void generateBriefReport() {
         for (Item item : items) {
         	//calculates all item details and saves them in the projects lists
-            setItemDetails(item);
+        	try {
+        		setItemDetails(item);
+        	}catch(NullPointerException e) {
+        		e.printStackTrace();
+        	}
         }
         
         setReportElements();
-
+        assert format !=null : "Format is null.";
         format.generateFile(this);
     }
     
@@ -65,12 +70,29 @@ public class BriefReport extends Report {
      * Sets a list of items with all calculated details
      * @param item Project or task that we want to calculate the details
      */
-    private void setItemDetails(Item item) {
-		long period = recursiveTreeSearch(item);
-		String initialDate = calculateInitialDate(item);
-		String endDate = calculateFinalDate(item);
+    private void setItemDetails(Item item) throws NullPointerException{
+    	if (item == null) throw new NullPointerException("Item is null.");
+    	long period = 0;
+    	String initialDate = "";
+    	String endDate = "";
+    	try {
+    		period = recursiveTreeSearch(item);
+    	}catch(NullPointerException e){
+    		e.printStackTrace();
+    	}
+    	try {
+    		initialDate = calculateInitialDate(item);
+    		endDate = calculateFinalDate(item);
+    	}catch(NullPointerException e){
+    		e.printStackTrace();
+    	}
 		
-		mainItems.add(new ItemReportDetail(item.getName(), period/1000, initialDate, endDate));//add this to the node projects lists
+    	try {
+    		mainItems.add(new ItemReportDetail(item.getName(), period/1000, initialDate, endDate));//add this to the node projects lists
+    	}catch(IllegalArgumentException e) {
+    		e.printStackTrace();
+    	}
+		
 		duration = 0; //Reset the global variable in order to start again with the other item
 	}
 
@@ -79,12 +101,21 @@ public class BriefReport extends Report {
      * @param item Project or task that we want to calculate the details
      * @return long The accumulate duration of all items inside
      */
-    private long recursiveTreeSearch(Item item) {
-        if (item instanceof Task) { //Basic case     	     
-            calculateItemDuration(item);
+    private long recursiveTreeSearch(Item item) throws NullPointerException{
+    	if (item == null) throw new NullPointerException("Item is null.");
+        if (item instanceof Task) { //Basic case
+            try {
+            	calculateItemDuration(item);
+            }catch(NullPointerException e) {
+            	e.printStackTrace();
+            }
         } else {
             for (Item subItem : ((Project) item).getItems()) {
-                recursiveTreeSearch(subItem); //recursive function
+                try{
+                	recursiveTreeSearch(subItem); //recursive function
+                }catch(NullPointerException e) {
+                	e.printStackTrace();
+                }
             }
         }
         return duration;
@@ -94,7 +125,8 @@ public class BriefReport extends Report {
      * This function calculates the included time of a Item in a concrete period
      * @param item Item that we want to calculate
      */
-	private void calculateItemDuration(Item item) {
+	private void calculateItemDuration(Item item) throws NullPointerException{
+		if (item == null) throw new NullPointerException("Item is null.");
 		long initialDateTime = item.getPeriod().getStartWorkingDate().getTime();
 		long endDateTime = item.getPeriod().getFinalWorkingDate().getTime();
 
@@ -115,7 +147,8 @@ public class BriefReport extends Report {
 		}
 	}
     
-	private String calculateInitialDate(Item item) {
+	private String calculateInitialDate(Item item) throws NullPointerException{
+		if (item == null) throw new NullPointerException("Item is null.");
 		long initialDateTime = item.getPeriod().getStartWorkingDate().getTime();
 		String initialDate;
 		if (initialDateTime > startPeriodTime) {
@@ -127,7 +160,8 @@ public class BriefReport extends Report {
 		return initialDate;
 	}
 	
-    private String calculateFinalDate(Item item) {
+    private String calculateFinalDate(Item item) throws NullPointerException{
+    	if (item == null) throw new NullPointerException("Item is null.");
 		long endDateTime = item.getPeriod().getFinalWorkingDate().getTime();
 		String endDate;
 		if (endDateTime < endPeriodTime) {

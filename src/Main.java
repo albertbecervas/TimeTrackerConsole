@@ -80,11 +80,19 @@ public class Main {
                 showMenu();
                 break;
             case GENERATE_DETAILED_REPORT:
-                new DetailedReport(items,FORMAT);
+            	try {
+            		new DetailedReport(items,FORMAT);
+            	}catch(IllegalArgumentException e) {
+            		e.printStackTrace();
+            	}
                 showMenu();
                 break;
             case GENERATE_BRIEF_REPORT:
-                new BriefReport(items,FORMAT);
+            	try {
+            		new BriefReport(items,FORMAT);
+            	}catch(IllegalArgumentException e) {
+            		e.printStackTrace();
+            	}
                 showMenu();
                 break;
             default:

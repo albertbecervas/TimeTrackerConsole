@@ -12,8 +12,8 @@ import model.Item;
 
 /**
  * Generic class of a report that keeps the common data in all report types
- * @author Albert
- *
+ * @invariant startDateString != null;
+ * @invariant endDateString != null;
  */
 public class Report {
 
@@ -32,7 +32,8 @@ public class Report {
 
     public Report() {
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-
+        assert startDateString != null : "startDateString is null";
+        assert endDateString != null : "endDateString is null";
         try {
             //specified period which we want to get the report from
             startPeriodTime = df.parse(startDateString).getTime();
@@ -42,7 +43,6 @@ public class Report {
         }
         
         generationDate = df.format(new Date());
-        
         elements = new ArrayList<Element>();
     }
     
@@ -54,7 +54,8 @@ public class Report {
         return startDateString;
     }
 
-    public void setStartDateString(String startDateString) {
+    public void setStartDateString(String startDateString) throws NullPointerException{
+    	if(startDateString == null) throw new NullPointerException("startDateString is null");
         this.startDateString = startDateString;
     }
 
@@ -62,7 +63,8 @@ public class Report {
         return endDateString;
     }
 
-    public void setEndDateString(String endDateString) {
+    public void setEndDateString(String endDateString) throws NullPointerException{
+    	if(endDateString == null) throw new NullPointerException("endDateString is null");
         this.endDateString = endDateString;
     }
 
@@ -70,7 +72,8 @@ public class Report {
         return generationDate;
     }
 
-    public void setGenerationDate(String generationDate) {
+    public void setGenerationDate(String generationDate) throws NullPointerException{
+    	if(generationDate == null) throw new NullPointerException("generationDate is null");
         this.generationDate = generationDate;
     }
 }

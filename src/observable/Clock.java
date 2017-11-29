@@ -15,12 +15,13 @@ import java.util.TimerTask;
  */
 public class Clock extends Observable {
 
-    public static final int CLOCK_SECONDS = 1;
+    public static final int CLOCK_SECONDS = 0;
     
     private static Clock instance = null;
     
     private Clock() {
         Timer timer = new Timer();
+        assert CLOCK_SECONDS > 0 : "CLOCK_SECONDS must be greater than zero";
         timer.schedule(new Thread(this), new Date(), CLOCK_SECONDS * 1000); //schedule the time in mills.
     }
 

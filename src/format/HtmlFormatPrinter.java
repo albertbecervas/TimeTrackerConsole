@@ -59,6 +59,7 @@ public class HtmlFormatPrinter extends Format{
 			}
 		}
 		
+		assert writer != null : "Writer is null.";
         writer.close();		
 	}
 

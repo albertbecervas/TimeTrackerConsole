@@ -27,7 +27,7 @@ public class Item implements Serializable {
         return name;
     }
 
-    public void setName(String name) throws IllegalArgumentException{ //TODO never called
+    public void setName(String name) throws IllegalArgumentException{
     	if(name == null) throw new IllegalArgumentException("Name can not be null.");
         this.name = name;
     }
@@ -36,7 +36,7 @@ public class Item implements Serializable {
         return description;
     }
 
-    public void setDescription(String description) {//TODO never called
+    public void setDescription(String description) {
     	if(description == null) throw new IllegalArgumentException("Description can not be null.");
         this.description = description;
     }
@@ -45,7 +45,7 @@ public class Item implements Serializable {
         return isOpen;
     }
 
-    public void setOpen(boolean isOpen) {//TODO never called
+    public void setOpen(boolean isOpen) {
         this.isOpen = isOpen;
     }
 
@@ -53,7 +53,7 @@ public class Item implements Serializable {
         return period;
     }
 
-    public void setPeriod(Period period) {//TODO never called
+    public void setPeriod(Period period) {
         this.period = period;
     }
 

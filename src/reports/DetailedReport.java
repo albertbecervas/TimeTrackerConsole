@@ -34,12 +34,16 @@ public class DetailedReport extends Report {
     private long taskDuration = 0;
     private long intervalDuration = 0;
     
-    public DetailedReport(ArrayList<Item> items, String format) {
+    public DetailedReport(ArrayList<Item> items, String format) throws IllegalArgumentException{
         this.items = items;
         
         initialiseLists();
         
-        setFormat(format);
+        try {
+        	setFormat(format);
+        }catch(NullPointerException e) {
+        	e.printStackTrace();
+        }
         
         generateDetailedReport();
     }
@@ -54,7 +58,8 @@ public class DetailedReport extends Report {
     /**
      * Sets the format of the file that will be generated
      */
-    private void setFormat(String format){
+    private void setFormat(String format) throws IllegalArgumentException{
+    	if (format != "txt" && format != "html") throw new IllegalArgumentException("Invalid value for format.");
     	switch(format){
     	case "txt":
         	this.format = new TextFormatPrinter();
@@ -65,12 +70,19 @@ public class DetailedReport extends Report {
     }
     
     public void generateDetailedReport() {
-
         for (Item item : items) {
         	if (item instanceof Project){
-	            setProjectsDetails(item);
+        		try {
+        			setProjectsDetails(item);
+        		}catch(NullPointerException e) {
+        			e.printStackTrace();
+        		}
         	} else {
-        		recursiveTreeSearch(item);
+        		try {
+        			recursiveTreeSearch(item);
+        		}catch(NullPointerException e) {
+        			e.printStackTrace();
+        		}
         	}
             duration = 0;
         }
@@ -84,10 +96,22 @@ public class DetailedReport extends Report {
      * Sets a list of projects with all calculated details
      * @param item Project that we want to calculate the details
      */
-	private void setProjectsDetails(Item item) {
-		projectDuration = recursiveTreeSearch(item);
-		String initialDate = calculateInitialDate(item);
-		String endDate = calculateFinalDate(item);
+	private void setProjectsDetails(Item item) throws NullPointerException{
+		if (item == null) throw new NullPointerException("Item is null.");
+		try {
+			projectDuration = recursiveTreeSearch(item);
+		}catch(NullPointerException e) {
+			e.printStackTrace();
+		}
+		
+		String initialDate = "";
+        String endDate = "";
+        try {
+        	initialDate = calculateInitialDate(item);
+        	endDate = calculateFinalDate(item);
+        }catch(NullPointerException e) {
+        	e.printStackTrace();
+        }
 		
 		projects.add(new ItemReportDetail(item.getName(), projectDuration/1000, initialDate, endDate));//add this to the node projects lists
 	}
@@ -97,22 +121,38 @@ public class DetailedReport extends Report {
      * @param item Project or task that we want to calculate the details
      * @return long The accumulate duration of all items inside
      */
-    private long recursiveTreeSearch(Item item) {
+    private long recursiveTreeSearch(Item item) throws NullPointerException{
+    	if (item == null) throw new NullPointerException("Item is null.");
         if (item instanceof Task) { 
         	//calculate the task duration and saves the details
         	//Also adds the task duration to the global duration variable in order
         	//to calculate the father project duration
             long initialDateTime = item.getPeriod().getStartWorkingDate().getTime();
             long endDateTime = item.getPeriod().getFinalWorkingDate().getTime();
-
-            calculateItemDuration(initialDateTime, endDateTime);
-            String initialDate = calculateInitialDate(item);
-            String endDate = calculateFinalDate(item);
+            
+            try {
+            	calculateItemDuration(initialDateTime, endDateTime);
+            }catch(IllegalArgumentException e) {
+            	e.printStackTrace();
+            }
+            
+            String initialDate = "";
+            String endDate = "";
+            try {
+            	initialDate = calculateInitialDate(item);
+            	endDate = calculateFinalDate(item);
+            }catch(NullPointerException e) {
+            	e.printStackTrace();
+            }
             
             tasks.add(new ItemReportDetail(item.getName(), taskDuration/1000, initialDate, endDate));
             
             for (Interval interval : ((Task) item).getIntervals()) {
-            	intervalDuration = calculateIntervalDuration(interval);
+            	try {
+            		intervalDuration = calculateIntervalDuration(interval);
+            	}catch(NullPointerException e) {
+            		e.printStackTrace();
+            	}
     	        DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
             	String initialIntervalDate = df.format(interval.getInitialDate());
             	String finalIntervalDate = df.format(interval.getFinalDate());
@@ -122,7 +162,11 @@ public class DetailedReport extends Report {
 
         } else {
             for (Item subItem : ((Project) item).getItems()) {
-                subProjectDuration = recursiveTreeSearch(subItem); //recursive function
+            	try {
+            		subProjectDuration = recursiveTreeSearch(subItem); //recursive function
+            	}catch(NullPointerException e) {
+            		e.printStackTrace();
+            	}
                 if (subItem instanceof Project) {
                     String initialDate = calculateInitialDate(item);
                     String endDate = calculateFinalDate(item);
@@ -141,7 +185,8 @@ public class DetailedReport extends Report {
      * @param initialDateTime Initial date of the task in milliseconds
      * @param endDateTime Final date of the task in milliseconds
      */
-	private void calculateItemDuration(long initialDateTime, long endDateTime) {
+	private void calculateItemDuration(long initialDateTime, long endDateTime) throws IllegalArgumentException{
+		if(initialDateTime > endDateTime) throw new IllegalArgumentException("initialDateTime is greater than endDateTime");
 		if (initialDateTime > startPeriodTime && initialDateTime < endPeriodTime) {
 			if (endDateTime < endPeriodTime) {
 				taskDuration = endDateTime - initialDateTime;
@@ -170,8 +215,8 @@ public class DetailedReport extends Report {
      * @param interval Interval that we want to calculate
      * @return duration of the interval included in the specified period
      */
-    private long calculateIntervalDuration(Interval interval) {
-
+    private long calculateIntervalDuration(Interval interval) throws NullPointerException{
+    	if (interval == null) throw new NullPointerException("Item is null.");
         //complete period
         long startIntervalTime = interval.getInitialDate().getTime();
         long endIntervalTime = interval.getFinalDate().getTime();
@@ -205,7 +250,8 @@ public class DetailedReport extends Report {
         return 0;
     }
 	
-	private String calculateInitialDate(Item item) {
+	private String calculateInitialDate(Item item) throws NullPointerException{
+		if (item == null) throw new NullPointerException("Item is null.");
 		long initialDateTime = item.getPeriod().getStartWorkingDate().getTime();
 		String initialDate;
 		if (initialDateTime > startPeriodTime) {
@@ -217,7 +263,8 @@ public class DetailedReport extends Report {
 		return initialDate;
 	}
     
-    private String calculateFinalDate(Item item) {
+    private String calculateFinalDate(Item item) throws NullPointerException{
+    	if (item == null) throw new NullPointerException("Item is null.");
 		long endDateTime = item.getPeriod().getFinalWorkingDate().getTime();
 		String endDate;
 		if (endDateTime < endPeriodTime) {
