@@ -39,7 +39,7 @@ public abstract class ItemsTreeManager {
         return items;
     }
     
-    public static ArrayList<Item> setTree2() {
+    public static ArrayList<Item> setTreeOfFita2() {
         ArrayList<Item> items = new ArrayList<Item>();
     	
     	Project p1 = new Project("P1","p1",null);

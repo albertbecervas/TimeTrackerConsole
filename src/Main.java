@@ -1,6 +1,4 @@
 
-
-
 import model.Item;
 import model.Project;
 import model.Task;
@@ -22,30 +20,24 @@ public class Main {
     private static final int RUN_TEST_3 = 4;
     private static final int GENERATE_DETAILED_REPORT = 5;
     private static final int GENERATE_BRIEF_REPORT = 6;
+    
+    private static final String FORMAT = "txt";
 
     private static ArrayList<Item> items; //Main items of the tree, coming from node 0
 
     public static void main(String[] args) {
 
         //We ask the file to return saved items
-        //items = ItemsTreeManager.getItems();
-
-        //if we don't get any items from file, we set the a new empty tree and then we save it in the file
-        /*if (items.size() == 0) {
-            items = ItemsTreeManager.setTree();
-            ItemsTreeManager.saveItems(items);
-        }*/
-
         items = ItemsTreeManager.getItems();
 
+        //if we don't get any items from file, we set the a new empty tree and then we save it in the file
         if (items.size() == 0) {
-            items = ItemsTreeManager.setTree2();
+            items = ItemsTreeManager.setTreeOfFita2();
             ItemsTreeManager.saveItems(items);
         }
 
         //once we have loaded the list of main items we show a menu to the user and ask for an action
         showMenu();
-
     }
 
     private static void showMenu() {
@@ -56,6 +48,7 @@ public class Main {
         System.out.println("  1.Run task test");
         System.out.println("  2.Run simultaneous tasks test");
         System.out.println("  3.Reset tree");
+        System.out.println("---------- FITA 2 ------------");
         System.out.println("  4.Run test fita 2");
         System.out.println("  5.Generate Detailed Report");
         System.out.println("  6.Generate Brief Report");
@@ -83,17 +76,15 @@ public class Main {
                 main(null); //reopen the project after the items tree is reset
                 break;
             case RUN_TEST_3:
-                generateBriefReport();
+                simulateUserInteractionFeature2();
                 showMenu();
                 break;
             case GENERATE_DETAILED_REPORT:
-                DetailedReport dReport = new DetailedReport(items,"html");
-                dReport.generateDetailedReport();
+                new DetailedReport(items,FORMAT);
                 showMenu();
                 break;
             case GENERATE_BRIEF_REPORT:
-                BriefReport report = new BriefReport(items,"txt");
-                report.generateBriefReport();
+                new BriefReport(items,FORMAT);
                 showMenu();
                 break;
             default:
@@ -104,9 +95,9 @@ public class Main {
     }
 
     /**
-     * Generates a report
+     * Generates the test for Feature 2
      */
-    private static void generateBriefReport() {
+    private static void simulateUserInteractionFeature2() {
         Project p1 = ((Project) items.get(0)); //gets the project1 from the main items list
         Project p12 = (Project) p1.getItems().get(0);
         Task t1 = (Task) p1.getItems().get(1);//gets the task1 from the project1 items list
@@ -116,8 +107,8 @@ public class Main {
         Project p2 = ((Project) items.get(1));
         Task t3 = (Task) p2.getItems().get(0);
 
+        //prints the start date in order to filter in the report
         System.out.print(new Date().toString());
-
 
         //start tasks 1 and 4 and wait 4 seconds
         t1.start();
@@ -148,6 +139,7 @@ public class Main {
         t3.stop();
         t2.stop();
 
+        //prints the end date in order to filter in the report
         System.out.print(new Date().toString());
 
         ItemsTreeManager.saveItems(items);
@@ -267,13 +259,12 @@ public class Main {
     /**
      * This function is used to sleep the thread
      *
-     * @param millis millis
+     * @param millis milliseconds
      */
     private static void sleep(int millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

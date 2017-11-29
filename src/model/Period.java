@@ -18,7 +18,7 @@ public class Period implements Serializable{
 	private Date startWorkingDate;
     private Date finalWorkingDate;
     private long duration;
-
+    
     public Period(){
         duration = 0L;
         this.startWorkingDate = new Date();

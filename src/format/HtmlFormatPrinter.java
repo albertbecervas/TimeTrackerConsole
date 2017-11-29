@@ -8,8 +8,15 @@ import elements.Element;
 import elements.Paragraph;
 import elements.Separator;
 import elements.Title;
+import reports.BriefReport;
 import reports.Report;
 
+/**
+ * When the father class is called from a report this class generates 
+ * a report in web format
+ * @author Albert
+ *
+ */
 public class HtmlFormatPrinter extends Format{
 
 	public HtmlFormatPrinter(){	
@@ -18,8 +25,16 @@ public class HtmlFormatPrinter extends Format{
 	@Override
 	public void generateFile(Report report) {
         PrintWriter writer = null;
+        String fileTitle = " ";
+        
+        if (report instanceof BriefReport){
+        	fileTitle = "BriefReport.html";
+        } else {
+        	fileTitle = "DetailedReport.html";
+        }
+             
 		try {
-			writer = new PrintWriter("DetailedReport.html", "UTF-8");
+			writer = new PrintWriter(fileTitle, "UTF-8");
 		} catch (FileNotFoundException | UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
