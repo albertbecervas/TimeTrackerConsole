@@ -6,6 +6,11 @@ import observable.Clock;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * @invariant name != null;
+ * @invariant description != null;
+ *
+ */
 public class Project extends Item {
 
 	private static final long serialVersionUID = 1L;//Needed object identifier
@@ -32,11 +37,13 @@ public class Project extends Item {
         this.items = items;
     }
 
-    public void newTask(String name, String description) {
+    public void newTask(String name, String description) throws IllegalArgumentException{
+    	if(name == null || description == null) throw new IllegalArgumentException("Name nor description can not be null");
         items.add(new Task(name, description, this));
     }
 
-    public void newProject(String name, String description) {
+    public void newProject(String name, String description) throws IllegalArgumentException{
+    	if(name == null || description == null) throw new IllegalArgumentException("Name nor description can not be null");
         items.add(new Project(name, description, this));
     }
     
@@ -53,7 +60,11 @@ public class Project extends Item {
     }
     
     public void update(Item item){
-        period.addDuration(Clock.CLOCK_SECONDS);
+    	try {
+    		period.addDuration(Clock.CLOCK_SECONDS);
+    	}catch(IllegalArgumentException e) {
+    		e.printStackTrace();
+    	}
 
         if (project != null) {
             project.update(this);//updating the father

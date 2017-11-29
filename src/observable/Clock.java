@@ -10,13 +10,15 @@ import java.util.TimerTask;
  * every specified period of time
  * 
  * It takes the roll of a clock in a parallel thread of the main application
+ * 
+ * @invariant CLOCK_SECONDS > 0;
  */
 public class Clock extends Observable {
 
-    public static final int CLOCK_SECONDS = 2; 
-
+    public static final int CLOCK_SECONDS = 1;
+    
     private static Clock instance = null;
-
+    
     private Clock() {
         Timer timer = new Timer();
         timer.schedule(new Thread(this), new Date(), CLOCK_SECONDS * 1000); //schedule the time in mills.

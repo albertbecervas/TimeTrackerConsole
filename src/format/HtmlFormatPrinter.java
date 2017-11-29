@@ -14,7 +14,6 @@ import reports.Report;
 /**
  * When the father class is called from a report this class generates 
  * a report in web format
- * @author Albert
  *
  */
 public class HtmlFormatPrinter extends Format{
@@ -45,18 +44,18 @@ public class HtmlFormatPrinter extends Format{
 						+ element.getElement()
 						+ "</h4>";
 	            writer.print(titleHtml);
-			}
-			if(element instanceof Separator){
+			}else if(element instanceof Separator){
 				String separatorHtml = "<h4>"
 						+ element.getElement()
 						+ "</h4>";
 	            writer.println(separatorHtml);
-			}
-			if(element instanceof Paragraph){
+			}else if(element instanceof Paragraph){
 				String paragraphHtml = "<p>"
 						+ element.getElement()
 						+ "</p>";
 	            writer.println(paragraphHtml);
+			}else {
+				assert false : "Element is not an instance of one of the defined classes.";
 			}
 		}
 		

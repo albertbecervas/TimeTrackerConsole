@@ -9,9 +9,12 @@ import java.io.Serializable;
  * the item tree state.
  * <p>
  * This class is public because will be called from other Classes
+ * 
+ * @invariant name != null;
+ * @invariant description != null;
+ *  
  */
 public class Item implements Serializable {
-
     protected static final long serialVersionUID = 1L; //Needed version number in order to Serialise the object
 
     protected String name;
@@ -24,7 +27,8 @@ public class Item implements Serializable {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws IllegalArgumentException{ //TODO never called
+    	if(name == null) throw new IllegalArgumentException("Name can not be null.");
         this.name = name;
     }
 
@@ -32,7 +36,8 @@ public class Item implements Serializable {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description) {//TODO never called
+    	if(description == null) throw new IllegalArgumentException("Description can not be null.");
         this.description = description;
     }
 
@@ -40,29 +45,29 @@ public class Item implements Serializable {
         return isOpen;
     }
 
-    public void setOpen(boolean isOpen) {
+    public void setOpen(boolean isOpen) {//TODO never called
         this.isOpen = isOpen;
     }
 
-    public Period getPeriod() {
+    public Period getPeriod() { 
         return period;
     }
 
-    public void setPeriod(Period period) {
+    public void setPeriod(Period period) {//TODO never called
         this.period = period;
     }
 
     public String getFormattedTable() {
         if (period == null) return "";
-        int secondsForHour = 3600;
-        int secondsForMinut = 60;
+        int secondsPerHour = 3600;
+        int secondsPerMinut = 60;
 
-        final long hours = period.getDuration() / secondsForHour;
-        final long minuts = (period.getDuration() - hours * secondsForHour) / secondsForMinut;
-        final long seconds = period.getDuration() - secondsForHour * hours - secondsForMinut * minuts;
+        final long hours = period.getDuration() / secondsPerHour;
+        final long minutes = (period.getDuration() - hours * secondsPerHour) / secondsPerMinut;
+        final long seconds = period.getDuration() - secondsPerHour * hours - secondsPerMinut * minutes;
 				
         return String.valueOf(getName() + " ---> "
-                + "duration = " + String.valueOf(hours + "h " + minuts + "m " + seconds + "s")) + " |"
+                + "duration = " + String.valueOf(hours + "h " + minutes + "m " + seconds + "s")) + " |"
                 + "from: " + period.getStartWorkingDate() + " | "
                 + "to: " + period.getFinalWorkingDate() + " |\n ";
         

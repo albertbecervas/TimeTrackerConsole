@@ -5,15 +5,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @invariant duration >=0
- * @author Albert
+ * @invariant duration >=0;
+ * @invariant startWorkingDate != null;
+ * @invariant finalWorkingDate != null;
  *
  */
 public class Period implements Serializable{
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private Date startWorkingDate;
     private Date finalWorkingDate;
@@ -44,11 +42,13 @@ public class Period implements Serializable{
         return duration;
     }
 
-    public void setDuration(long duration) {
+    public void setDuration(long duration) throws IllegalArgumentException{
+    	if (duration < 0) throw new IllegalArgumentException("Duration must be positive or zero.");
         this.duration = duration;
     }
 
     public void addDuration(long duration){
+    	if (duration < 0) throw new IllegalArgumentException("Duration must be positive or zero.");
         this.duration += duration;
     }
 }

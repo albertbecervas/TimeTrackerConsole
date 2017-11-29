@@ -6,6 +6,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * @invariant name != null;
+ * @invariant description != null;
+ */
+
 public class Task extends Item implements Serializable {
 
     private Project project;
@@ -47,7 +52,11 @@ public class Task extends Item implements Serializable {
     }
     
     public void update(Interval interval){
-        period.addDuration(Clock.CLOCK_SECONDS);
+        try {
+    		period.addDuration(Clock.CLOCK_SECONDS);
+    	}catch(IllegalArgumentException e) {
+    		e.printStackTrace();
+    	}
         if (project != null) project.update(this);//We check if the task is in the main items list
     }
 

@@ -25,10 +25,15 @@ public class Interval implements Serializable, Observer {
         Clock.getInstance().addObserver(this);
     }
 
-    public void setEndWorkingLogDatee(Date endWorkingLogDate) {
+    public void setEndWorkingLogDate(Date endWorkingLogDate) {
+    	if (period==null) throw new NullPointerException("period is null at method setEndWorkingLogDate");
         if (period == null) return;
         this.period.setFinalWorkingDate(endWorkingLogDate);
-        this.period.setDuration(calculateDuration());
+        try {
+        	this.period.setDuration(calculateDuration());
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
     }
 
     public void setOpen(boolean open) {
@@ -40,18 +45,26 @@ public class Interval implements Serializable, Observer {
     }
 
     private Long calculateDuration(){
-        return ((period.getFinalWorkingDate().getTime() - period.getStartWorkingDate().getTime()) / 1000);
+    	if (period==null) throw new NullPointerException("period is null at method calculateDuration");
+    	Long duration = ((period.getFinalWorkingDate().getTime() - period.getStartWorkingDate().getTime()) / 1000); 
+    	assert duration >= 0 : "duration is smaller than zero" + duration;
+    	return duration;
     }
 
     public Long getDuration(){
-        return period.getDuration();
+    	if (period==null) throw new NullPointerException("period is null at method getDuration");
+    	Long duration = period.getDuration();
+    	assert duration >= 0 : "duration is smaller than zero" + duration;
+        return duration;
     }
 
     public Date getFinalDate(){
+    	if (period==null) throw new NullPointerException("period is null at method getFinalDate");
         return period.getFinalWorkingDate();
     }
 
     public Date getInitialDate(){
+    	if (period==null) throw new NullPointerException("period is null at method getInitialDate");
         return period.getStartWorkingDate();
     }
 
@@ -59,7 +72,7 @@ public class Interval implements Serializable, Observer {
     public void update(Observable o, Object date) {
 
         if (isOpen) {
-            this.setEndWorkingLogDatee((Date) date);
+            this.setEndWorkingLogDate((Date) date);
             if (period.getDuration() != 0) {
                 task.update(this);
             }
