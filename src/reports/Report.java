@@ -17,10 +17,12 @@ import model.Item;
  */
 public class Report {
 
-    protected String startDateString = "28/11/2017 21:24:30"; //dd/MM/yyyy hh:mm:ss
-    protected String endDateString = "28/11/2017 21:24:40";
+    protected String startDateString = "29/11/2017 22:25:16"; //dd/MM/yyyy hh:mm:ss
+    protected String endDateString = "29/11/2017 22:29:46";
     protected long startPeriodTime;
     protected long endPeriodTime;
+    protected Date startPeriodDate;
+    protected Date endPeriodDate;
 
     protected String generationDate;
     
@@ -34,6 +36,8 @@ public class Report {
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 
         try {
+        	startPeriodDate = df.parse(startDateString);
+        	endPeriodDate = df.parse(endDateString);
             //specified period which we want to get the report from
             startPeriodTime = df.parse(startDateString).getTime();
             endPeriodTime = df.parse(endDateString).getTime();

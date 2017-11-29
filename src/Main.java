@@ -21,7 +21,7 @@ public class Main {
     private static final int GENERATE_DETAILED_REPORT = 5;
     private static final int GENERATE_BRIEF_REPORT = 6;
     
-    private static final String FORMAT = "txt";
+    private static final String FORMAT = "html";
 
     private static ArrayList<Item> items; //Main items of the tree, coming from node 0
 
@@ -113,27 +113,27 @@ public class Main {
         //start tasks 1 and 4 and wait 4 seconds
         t1.start();
         t4.start();
-        sleep(4000);
+        sleep(60000);
 
         //stop t1 and start t2 and wait 6 seconds
         t1.stop();
         t2.start();
-        sleep(6000);
+        sleep(150000);
 
         //stop t2 and t4, start t3 and wait 4 seconds
         t2.stop();
         t4.stop();
         t3.start();
-        sleep(4000);
+        sleep(120000);
 
         //stop t3 and start t2 again. Wait 2 seconds
         t3.stop();
         t2.start();
-        sleep(2000);
+        sleep(150000);
 
         //start t3 again and wait 4 seconds
         t3.start();
-        sleep(4000);
+        sleep(30000);
 
         //stop t3 and t2.
         t3.stop();
