@@ -1,12 +1,12 @@
 package elements;
 
-public class Separator extends Element{
+public class Separator extends Element {
 
-	String separator = "----------------------------------------------";
-	
-	@Override
-	public String getElement(){
-		return separator;
-	}
-	
+  String separator = "----------------------------------------------";
+
+  @Override
+  public String getElement() {
+    return separator;
+  }
+
 }

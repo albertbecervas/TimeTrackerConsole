@@ -1,349 +1,366 @@
 package reports;
 
-import model.Interval;
-import model.Item;
-import model.Project;
-import model.Task;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-
 import elements.Paragraph;
 import elements.Separator;
 import elements.Title;
 import format.HtmlFormatPrinter;
 import format.TextFormatPrinter;
 
-/**
- * Generates a detailed report of all items that shows: Duration, initial date, final date
- * and name of every item
- * @author Albert
- *
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+import model.Interval;
+import model.Item;
+import model.Project;
+import model.Task;
+
+
+/*
+ * Generates a detailed report of all items that shows: Duration, initial date, 
+ * final date and name of every item.
  */
 public class DetailedReport extends Report {
 
-    private ArrayList<ItemReportDetail> projects;
-    private ArrayList<ItemReportDetail> subProjects;
-    private ArrayList<ItemReportDetail> tasks;
-    private ArrayList<ItemReportDetail> intervals;
+  private ArrayList<ItemReportDetail> projects;
+  private ArrayList<ItemReportDetail> subProjects;
+  private ArrayList<ItemReportDetail> tasks;
+  private ArrayList<ItemReportDetail> intervals;
 
-    private long duration = 0;//global variable in order to keep value in recursive function
-    private long projectDuration = 0;
-    private long subProjectDuration = 0;
-    private long taskDuration = 0;
-    private long intervalDuration = 0;
-    
-    public DetailedReport(ArrayList<Item> items, String format) throws IllegalArgumentException{
-        this.items = items;
-        
-        initialiseLists();
-        
-        try {
-        	setFormat(format);
-        }catch(NullPointerException e) {
-        	e.printStackTrace();
-        }
-        
-        generateDetailedReport();
+  private long duration = 0; // Global variable in order to keep value in recursive function.
+  long subProjectDuration = 0;
+
+  private DateFormat df;
+
+  /**
+   * Create a detailed report.
+   * @param items List of items.
+   * @param format Format to print report.
+   */
+  public DetailedReport(ArrayList<Item> items, String format) {
+    this.items = items;
+
+    this.df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+
+    initialiseLists();
+    try {
+      setFormat(format);
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+      this.format = new TextFormatPrinter();
     }
 
-    private void initialiseLists(){
-        projects = new ArrayList<>();
-        subProjects = new ArrayList<>();
-        tasks = new ArrayList<>();
-        intervals = new ArrayList<>();
+    generateDetailedReport();
+  }
+
+  private void initialiseLists() {
+    projects = new ArrayList<>();
+    subProjects = new ArrayList<>();
+    tasks = new ArrayList<>();
+    intervals = new ArrayList<>();
+  }
+
+  /*
+   * Sets the format of the file that will be generated.
+   */
+  private void setFormat(String format) throws IllegalArgumentException {
+    if (format != "txt" && format != "html") {
+      throw new IllegalArgumentException("Invalid value for format");
+    }
+    switch (format) {
+      case "txt":
+        this.format = new TextFormatPrinter();
+        break;
+      case "html":
+        this.format = new HtmlFormatPrinter();
+        break;
+      default:
+        assert false : "Invalid format";
     }
 
-    /**
-     * Sets the format of the file that will be generated
-     */
-    private void setFormat(String format) throws IllegalArgumentException{
-    	if (format != "txt" && format != "html") throw new IllegalArgumentException("Invalid value for format.");
-    	switch(format){
-    	case "txt":
-        	this.format = new TextFormatPrinter();
-        	break;
-    	case "html":
-    		this.format = new HtmlFormatPrinter();
-    	}
-    }
-    
-    public void generateDetailedReport() {
-        for (Item item : items) {
-        	if (item instanceof Project){
-        		try {
-        			setProjectsDetails(item);
-        		}catch(NullPointerException e) {
-        			e.printStackTrace();
-        		}
-        	} else {
-        		try {
-        			recursiveTreeSearch(item);
-        		}catch(NullPointerException e) {
-        			e.printStackTrace();
-        		}
-        	}
-            duration = 0;
-        }
+  }
 
-        setReportElements();
+  /**
+   * Generate a detailed report.
+   */
+  public void generateDetailedReport() {
 
-        format.generateFile(this);
-    }
-
-    /**
-     * Sets a list of projects with all calculated details
-     * @param item Project that we want to calculate the details
-     */
-	private void setProjectsDetails(Item item) throws NullPointerException{
-		if (item == null) throw new NullPointerException("Item is null.");
-		try {
-			projectDuration = recursiveTreeSearch(item);
-		}catch(NullPointerException e) {
-			e.printStackTrace();
-		}
-		
-		String initialDate = "";
-        String endDate = "";
-        try {
-        	initialDate = calculateInitialDate(item);
-        	endDate = calculateFinalDate(item);
-        }catch(NullPointerException e) {
-        	e.printStackTrace();
-        }
-		
-		projects.add(new ItemReportDetail(item.getName(), projectDuration/1000, initialDate, endDate));//add this to the node projects lists
-	}
-
-    /**
-     * Iterates through the items in order to calculate every subItem parameters
-     * @param item Project or task that we want to calculate the details
-     * @return long The accumulate duration of all items inside
-     */
-    private long recursiveTreeSearch(Item item) throws NullPointerException{
-    	if (item == null) throw new NullPointerException("Item is null.");
-        if (item instanceof Task) { 
-        	//calculate the task duration and saves the details
-        	//Also adds the task duration to the global duration variable in order
-        	//to calculate the father project duration
-            long initialDateTime = item.getPeriod().getStartWorkingDate().getTime();
-            long endDateTime = item.getPeriod().getFinalWorkingDate().getTime();
-            
-            try {
-            	calculateItemDuration(initialDateTime, endDateTime);
-            }catch(IllegalArgumentException e) {
-            	e.printStackTrace();
-            }
-            
-            String initialDate = "";
-            String endDate = "";
-            try {
-            	initialDate = calculateInitialDate(item);
-            	endDate = calculateFinalDate(item);
-            }catch(NullPointerException e) {
-            	e.printStackTrace();
-            }
-            
-            tasks.add(new ItemReportDetail(item.getName(), taskDuration/1000, initialDate, endDate));
-            
-            for (Interval interval : ((Task) item).getIntervals()) {
-            	try {
-            		intervalDuration = calculateIntervalDuration(interval);
-            	}catch(NullPointerException e) {
-            		e.printStackTrace();
-            	}
-    	        DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-            	String initialIntervalDate = df.format(interval.getInitialDate());
-            	String finalIntervalDate = df.format(interval.getFinalDate());
-
-            	intervals.add(new ItemReportDetail(item.getName(), intervalDuration/1000 ,initialIntervalDate, finalIntervalDate));
-        	}
-
+    for (Item item : items) {
+      try {
+        if (item instanceof Project) {
+          setProjectsDetails(item);
         } else {
-            for (Item subItem : ((Project) item).getItems()) {
-            	try {
-            		subProjectDuration = recursiveTreeSearch(subItem); //recursive function
-            	}catch(NullPointerException e) {
-            		e.printStackTrace();
-            	}
-                if (subItem instanceof Project) {
-                    String initialDate = calculateInitialDate(item);
-                    String endDate = calculateFinalDate(item);
-                    
-                    subProjects.add(new ItemReportDetail(subItem.getName(), subProjectDuration/1000, initialDate, endDate));
-                }
-                subProjectDuration = 0;
-            }
+          recursiveTreeSearch(item, false);
         }
-        return duration;
+      } catch (NullPointerException e) {
+        e.printStackTrace();
+      }
+      duration = 0;
     }
 
+    setReportElements();
 
-    /**
-     * This function calculates the included time of a Item in a concrete period
-     * @param initialDateTime Initial date of the task in milliseconds
-     * @param endDateTime Final date of the task in milliseconds
-     */
-	private void calculateItemDuration(long initialDateTime, long endDateTime) throws IllegalArgumentException{
-		if(initialDateTime > endDateTime) throw new IllegalArgumentException("initialDateTime is greater than endDateTime");
-		if (initialDateTime > startPeriodTime && initialDateTime < endPeriodTime) {
-			if (endDateTime < endPeriodTime) {
-				taskDuration = endDateTime - initialDateTime;
-				duration += taskDuration;
-		    } else {
-		    	taskDuration = endPeriodTime - initialDateTime;
-		    	duration += taskDuration;
-		    }
-		} else if (endDateTime < endPeriodTime && endDateTime > startPeriodTime){
-			if (initialDateTime> startPeriodTime) {
-				taskDuration = endDateTime - startPeriodTime;
-		    	duration += taskDuration;
-		    } else {
-		    	taskDuration = endDateTime - startPeriodTime;
-		    	duration += taskDuration;
-		    }
-		} else if(initialDateTime < startPeriodTime && endDateTime > endPeriodTime){
-			taskDuration = endPeriodTime - startPeriodTime;
-			duration += taskDuration;
-		}
-	}
+    format.generateFile(this);
+  }
 
-    /**
-     * This function calculates the included time of a interval in a concrete period
-     *
-     * @param interval Interval that we want to calculate
-     * @return duration of the interval included in the specified period
-     */
-    private long calculateIntervalDuration(Interval interval) throws NullPointerException{
-    	if (interval == null) throw new NullPointerException("Item is null.");
-        //complete period
-        long startIntervalTime = interval.getInitialDate().getTime();
-        long endIntervalTime = interval.getFinalDate().getTime();
-
-        //if interval is finished after the start of the selected period
-        if ((endIntervalTime > startPeriodTime) && (endIntervalTime < endPeriodTime)) {
-            /**interval is started after the start of the selected period
-             * 	TRUE: we return the complete interval time
-             * 	FALSE: we return the included interval time
-             */
-            if (startIntervalTime > startPeriodTime) {
-                return interval.getDuration();
-            } else {
-                return endIntervalTime - startPeriodTime;
-            }
-        }
-
-        //if interval is started before the end of the selected period
-        if ((startIntervalTime > startPeriodTime) && (startIntervalTime < endPeriodTime)) {
-            /**interval is ended before the end of the selected period
-             * 	TRUE: we return the complete interval time
-             * 	FALSE: we return the included interval time
-             */
-            if (endIntervalTime < endPeriodTime) {
-                return interval.getDuration();
-            } else {
-                return endPeriodTime - startIntervalTime;
-            }
-        }
-
-        return 0;
+  /**
+   * Iterates through the items in order to calculate every subItem parameters.
+   * @param item Project or task that we want to calculate the details.
+   * @return long The accumulate duration of all items inside.
+   */
+  private long recursiveTreeSearch(Item item, boolean isSubProject) throws NullPointerException {
+    if (item == null) {
+      throw new NullPointerException("Item is null.");
     }
-	
-	private String calculateInitialDate(Item item) throws NullPointerException{
-		if (item == null) throw new NullPointerException("Item is null.");
-		long initialDateTime = item.getPeriod().getStartWorkingDate().getTime();
-		String initialDate;
-		if (initialDateTime > startPeriodTime) {
-	        DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-		    initialDate = df.format(item.getPeriod().getStartWorkingDate());
-		} else {
-		    initialDate = startDateString;
-		}
-		return initialDate;
-	}
+    long itemDuration = 0;
+    if (item instanceof Task) {
+
+      for (Interval interval : ((Task) item).getIntervals()) {
+
+        itemDuration = setIntervalDetails(item, itemDuration, interval);
+      }
+
+      setTaskDetails(item, isSubProject, itemDuration);
+
+    } else {
+      for (Item subItem : ((Project) item).getItems()) {
+        try {
+          recursiveTreeSearch(subItem, true);
+        } catch (NullPointerException e) {
+          e.printStackTrace();
+        }
+        System.out.println("duration-->" + subItem.getName() + "-->" + subProjectDuration);
+        if (subItem instanceof Project) {
+          setSubProjectDetails(subItem);
+        }
+        if (!isSubProject) {
+          subProjectDuration = 0;
+        }
+      }
+    }
+    return itemDuration;
+  }
+
+  /**
+   * Sets a list of projects with all calculated details.
+   * @param item Project that we want to calculate the details.
+   */
+  private void setProjectsDetails(Item item) {
+    if (item == null) {
+      throw new NullPointerException("Item is null.");
+    }
+    recursiveTreeSearch(item, false);
+    Date initialDate = calculateInitialDate(item);
+    Date endDate = calculateFinalDate(item);
+
+    String initialDateText;
+    String endDateText;
+    if (initialDate != null && endDate != null) {
+      initialDateText = df.format(initialDate);
+      endDateText = df.format(endDate);
+    } else {
+      initialDateText = "-";
+      endDateText = "-";
+    }
     
-    private String calculateFinalDate(Item item) throws NullPointerException{
-    	if (item == null) throw new NullPointerException("Item is null.");
-		long endDateTime = item.getPeriod().getFinalWorkingDate().getTime();
-		String endDate;
-		if (endDateTime < endPeriodTime) {
-			DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-		    endDate = df.format(item.getPeriod().getFinalWorkingDate());
-		} else {
-		    endDate = endDateString;
-		}
-		return endDate;
-	}
+    // Add this to the node projects lists.
+    projects.add(new ItemReportDetail(item.getName(), duration / 1000, 
+        initialDateText, endDateText));
+  }
 
-    /**
-     * Once all items are calculated, we set the elements that we want our report to have
-     */
-    private void setReportElements() {
-    	
-		elements.add(new Separator());
-		elements.add(new Title("INFORME DETALLAT"));
-		elements.add(new Separator());
-		elements.add(new Paragraph("desde-->  " + this.startDateString));
-		elements.add(new Paragraph("fins-->  " + this.endDateString));
-		elements.add(new Paragraph("generat-->  " + this.generationDate));
-		elements.add(new Separator());
-    	
-		elements.add(new Title("Projects 	  Data_Inici  		 Data_final  	  Durada"));
-        elements.add(new Separator());
-        for(ItemReportDetail item : projects){
-        	String paragraph = item.getName() 
-        			+ "  |  "
-        			+ item.getInitialDate()
-        			+ "  |  "
-        			+ item.getFinalDate()
-        			+ "  |  "
-        			+ item.getIncludedDuration();
-        	elements.add(new Paragraph(paragraph));
-        }
-        elements.add(new Separator());
-        
-        elements.add(new Title("SubProjects 	  Data_Inici 		  Data_final  	  Durada"));
-        elements.add(new Separator());
-        for(ItemReportDetail item : subProjects){
-        	String paragraph = item.getName() 
-        			+ "  |  "
-        			+ item.getInitialDate()
-        			+ "  |  "
-        			+ item.getFinalDate()
-        			+ "  |  "
-        			+ item.getIncludedDuration();
-        	elements.add(new Paragraph(paragraph));
-        }
-        elements.add(new Separator());
-        
-        elements.add(new Title("Tasks  	 Data_Inici 		  Data_final 	   Durada"));
-        elements.add(new Separator());
-        for(ItemReportDetail item : tasks){
-        	String paragraph = item.getName() 
-        			+ "  |  "
-        			+ item.getInitialDate()
-        			+ "  |  "
-        			+ item.getFinalDate()
-        			+ "  |  "
-        			+ item.getIncludedDuration();
-        	elements.add(new Paragraph(paragraph));
-        }
-        elements.add(new Separator());
-        
-        elements.add(new Title("Intervals  	 Data_Inici 		  Data_final   	 Durada"));
-        elements.add(new Separator());
-        for(ItemReportDetail item : intervals){
-        	String paragraph = item.getName() 
-        			+ "  |  "
-        			+ item.getInitialDate()
-        			+ "  |  "
-        			+ item.getFinalDate()
-        			+ "  |  "
-        			+ item.getIncludedDuration();
-        	elements.add(new Paragraph(paragraph));
-        }
-        elements.add(new Separator());
-	}
+  /**
+   * Sets a list of sub projects with all calculated details.
+   * @param subItem Project that we want to calculate the details.
+   */
+  private void setSubProjectDetails(Item subItem) {
+    Date initialDate = calculateInitialDate(subItem);
+    Date endDate = calculateFinalDate(subItem);
+
+    String initialDateText;
+    String endDateText;
+    if (initialDate != null && endDate != null) {
+      initialDateText = df.format(initialDate);
+      endDateText = df.format(endDate);
+    } else {
+      initialDateText = "-";
+      endDateText = "-";
+    }
+
+    subProjects.add(new ItemReportDetail(subItem.getName(), 
+        subProjectDuration / 1000, initialDateText, endDateText));
+  }
+
+  /**
+   * Sets a list of tasks with all calculated details.
+   * @param item Task that we want to calculate the details.
+   * @param isSubProject Boolean to check if the father is a sub project.
+   * @param itemDuration Duration of the task to return in the iterative function.
+   */
+  private void setTaskDetails(Item item, boolean isSubProject, long itemDuration) {
+    Date initialDate = calculateInitialDate(item);
+    Date endDate = calculateFinalDate(item);
+    duration += itemDuration;// update the projects time
+    if (isSubProject) {
+      subProjectDuration += itemDuration;
+    }
+
+    String initialDateText;
+    String endDateText;
+    if (initialDate != null && endDate != null) {
+      initialDateText = df.format(initialDate);
+      endDateText = df.format(endDate);
+    } else {
+      initialDateText = "-";
+      endDateText = "-";
+    }
+
+    tasks.add(new ItemReportDetail(item.getName(), itemDuration / 1000, 
+        initialDateText, endDateText));
+  }
+
+  /**
+   * Sets a list of tasks with all calculated details.
+   * @param item Task that we want to calculate the details of the interval.
+   * @param itemDuration Duration of the task to return in the iterative function.
+   * @param interval Interval that we want to set details.
+   * @return itemDuration Duration of item.
+   */
+  private long setIntervalDetails(Item item, long itemDuration, Interval interval) {
+    long intervalDuration = 0;
+    Date initialDate = calculateInitialDate(interval);
+    Date endDate = calculateFinalDate(interval);
+
+    String initialDateText;
+    String endDateText;
+    if (initialDate != null && endDate != null) {
+      intervalDuration = endDate.getTime() - initialDate.getTime();
+      itemDuration += intervalDuration;
+      initialDateText = df.format(initialDate);
+      endDateText = df.format(endDate);
+    } else {
+      initialDateText = "-";
+      endDateText = "-";
+      intervalDuration = 0;
+    }
+
+    intervals.add(new ItemReportDetail(item.getName(), intervalDuration / 1000, 
+        initialDateText, endDateText));
+    return itemDuration;
+  }
+
+  private Date calculateInitialDate(Item item) {
+    long initialDateTime = item.getPeriod().getStartWorkingDate().getTime();
+    long endDateTime = item.getPeriod().getFinalWorkingDate().getTime();
+
+    if (initialDateTime <= startPeriodTime) {
+      if (endDateTime <= startPeriodTime) {
+        return null;
+      }
+      return startPeriodDate;
+    } else if (initialDateTime > startPeriodTime && initialDateTime <= endPeriodTime) {
+      return item.getPeriod().getStartWorkingDate();
+    } else {
+      return null;
+    }
+  }
+
+  private Date calculateInitialDate(Interval interval) {
+    long initialDateTime = interval.getInitialDate().getTime();
+    long endDateTime = interval.getFinalDate().getTime();
+
+    if (initialDateTime <= startPeriodTime) {
+      if (endDateTime <= startPeriodTime) {
+        return null;
+      }
+      return startPeriodDate;
+    } else if (initialDateTime > startPeriodTime && initialDateTime <= endPeriodTime) {
+      return interval.getInitialDate();
+    } else {
+      return null;
+    }
+  }
+
+  private Date calculateFinalDate(Item item) {
+    long initialDateTime = item.getPeriod().getStartWorkingDate().getTime();
+    long endDateTime = item.getPeriod().getFinalWorkingDate().getTime();
+
+    if (endDateTime >= endPeriodTime) {
+      if (initialDateTime >= endPeriodTime) {
+        return null;
+      }
+      return endPeriodDate;
+    } else if (endDateTime < endPeriodTime && endDateTime >= startPeriodTime) {
+      return item.getPeriod().getFinalWorkingDate();
+    } else {
+      return null;
+    }
+  }
+
+  private Date calculateFinalDate(Interval interval) {
+    long initialDateTime = interval.getInitialDate().getTime();
+    long endDateTime = interval.getFinalDate().getTime();
+
+    if (endDateTime >= endPeriodTime) {
+      if (initialDateTime >= endPeriodTime) {
+        return null;
+      }
+      return endPeriodDate;
+    } else if (endDateTime < endPeriodTime && endDateTime >= startPeriodTime) {
+      return interval.getFinalDate();
+    } else {
+      return null;
+    }
+  }
+
+  /*
+   * Once all items are calculated, we set the elements that we want our report to have.
+   */
+  private void setReportElements() {
+
+    elements.add(new Separator());
+    elements.add(new Title("INFORME DETALLAT"));
+    elements.add(new Separator());
+    elements.add(new Paragraph("desde-->  " + this.startDateString));
+    elements.add(new Paragraph("fins-->  " + this.endDateString));
+    elements.add(new Paragraph("generat-->  " + this.generationDate));
+    elements.add(new Separator());
+
+    elements.add(new Title("Projects      Data_Inici      Data_final      Durada"));
+    elements.add(new Separator());
+    for (ItemReportDetail item : projects) {
+      String paragraph = item.getName() + "  |  " + item.getInitialDate() + "  |  " 
+          + item.getFinalDate() + "  |  " + item.getIncludedDuration();
+      elements.add(new Paragraph(paragraph));
+    }
+    elements.add(new Separator());
+
+    elements.add(new Title("SubProjects      Data_Inici      Data_final      Durada"));
+    elements.add(new Separator());
+    for (ItemReportDetail item : subProjects) {
+      String paragraph = item.getName() + "  |  " + item.getInitialDate() + "  |  " 
+          + item.getFinalDate() + "  |  " + item.getIncludedDuration();
+      elements.add(new Paragraph(paragraph));
+    }
+    elements.add(new Separator());
+
+    elements.add(new Title("Tasks      Data_Inici      Data_final      Durada"));
+    elements.add(new Separator());
+    for (ItemReportDetail item : tasks) {
+      String paragraph = item.getName() + "  |  " + item.getInitialDate() + "  |  " 
+          + item.getFinalDate() + "  |  " + item.getIncludedDuration();
+      elements.add(new Paragraph(paragraph));
+    }
+    elements.add(new Separator());
+
+    elements.add(new Title("Intervals      Data_Inici      Data_final      Durada"));
+    elements.add(new Separator());
+    for (ItemReportDetail item : intervals) {
+      String paragraph = item.getName() + "  |  " + item.getInitialDate() + "  |  " 
+          + item.getFinalDate() + "  |  " + item.getIncludedDuration();
+      elements.add(new Paragraph(paragraph));
+    }
+    elements.add(new Separator());
+  }
 
 }
