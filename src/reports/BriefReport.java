@@ -1,5 +1,6 @@
 package reports;
 
+import elements.Element;
 import elements.Paragraph;
 import elements.Separator;
 import elements.Title;
@@ -60,10 +61,10 @@ public class BriefReport extends Report {
     }
     switch (format) {
       case "txt":
-        this.format = new TextFormatPrinter();
+        this.format = new TextFormatPrinter("BriefReport.txt");
         break;
       case "html":
-        this.format = new HtmlFormatPrinter();
+        this.format = new HtmlFormatPrinter("BriefReport.html");
         break;
       default:
         assert false : "Invalid format.";
@@ -84,8 +85,13 @@ public class BriefReport extends Report {
     }
 
     setReportElements();
-    assert format != null : "Format is null.";
-    format.generateFile(this);
+    
+    for (Element element : elements) {
+      element.print(format);
+    }
+    
+    //assert format != null : "Format is null.";
+    //format.generateFile(this);
   }
 
   /**

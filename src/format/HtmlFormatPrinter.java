@@ -1,6 +1,5 @@
 package format;
 
-import elements.Element;
 import elements.Paragraph;
 import elements.Separator;
 import elements.Title;
@@ -9,50 +8,44 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
-import reports.BriefReport;
-import reports.Report;
-
 /*
- * When the father class is called from a report this class generates a report in web format.
+ * When the superclass is called from an element this class prints it onto the file,
+ * adding the corresponding html tags. It also creates the file with the name given 
+ * in the constructor.
  */
 public class HtmlFormatPrinter extends Format {
+  
+  PrintWriter writer = null;
 
-  public HtmlFormatPrinter() {
-  }
-
-  @Override
-  public void generateFile(Report report) {
-    PrintWriter writer = null;
-    String fileTitle = " ";
-
-    if (report instanceof BriefReport) {
-      fileTitle = "BriefReport.html";
-    } else {
-      fileTitle = "DetailedReport.html";
-    }
-
+  public HtmlFormatPrinter(String fileTitle) {    
     try {
       writer = new PrintWriter(fileTitle, "UTF-8");
     } catch (FileNotFoundException | UnsupportedEncodingException e) {
       e.printStackTrace();
     }
+  }
 
-    for (Element element : report.getElements()) {
-      if (element instanceof Title) {
-        String titleHtml = "<h4>" + element.getElement() + "</h4>";
-        writer.print(titleHtml);
-      } else if (element instanceof Separator) {
-        String separatorHtml = "<h4>" + element.getElement() + "</h4>";
-        writer.println(separatorHtml);
-      } else if (element instanceof Paragraph) {
-        String paragraphHtml = "<p>" + element.getElement() + "</p>";
-        writer.println(paragraphHtml);
-      } else {
-        assert false : "Element is not an instance of one of the defined classes.";
-      }
-    }
 
-    assert writer != null : "Writer is null.";
+  @Override
+  public void print(Separator separator) {
+    String separatorHtml = "<h4>" + separator.getElement() + "</h4>";
+    writer.println(separatorHtml);    
+  }
+
+  @Override
+  public void print(Title title) {
+    String titleHtml = "<h4>" + title.getElement() + "</h4>";
+    writer.print(titleHtml);    
+  }
+
+  @Override
+  public void print(Paragraph paragraph) {
+    String paragraphHtml = "<p>" + paragraph.getElement() + "</p>";
+    writer.println(paragraphHtml);    
+  }
+  
+  @Override
+  public void close(){
     writer.close();
   }
 

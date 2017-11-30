@@ -22,7 +22,7 @@ public class Main {
   private static final int GENERATE_DETAILED_REPORT = 5;
   private static final int GENERATE_BRIEF_REPORT = 6;
 
-  private static final String FORMAT = "html";
+  private static final String FORMAT = "txt";
 
   private static ArrayList<Item> items; // Main items of the tree, coming from node 0.
 
@@ -122,13 +122,13 @@ public class Main {
     // Start tasks 1 and 4 and wait 4 seconds.
     t1.start();
     t4.start();
-    sleep(30000);
+    sleep(60000);
 
     // Stop t1 and start t2 and wait 6 seconds.
     Task t2 = (Task) p1.getItems().get(2); // Gets the task2 from the project1 items list.
     t1.stop();
     t2.start();
-    sleep(75000);
+    sleep(150000);
 
     // Stop t2 and t4, start t3 and wait 4 seconds.
     Project p2 = ((Project) items.get(1));
@@ -136,16 +136,16 @@ public class Main {
     t2.stop();
     t4.stop();
     t3.start();
-    sleep(60000);
+    sleep(120000);
 
     // Stop t3 and start t2 again. Wait 2 seconds.
     t3.stop();
     t2.start();
-    sleep(60000);
+    sleep(120000);
 
     // Start t3 again and wait 4 seconds.
     t3.start();
-    sleep(30000);
+    sleep(60000);
 
     // Stop t3 and t2.
     t3.stop();

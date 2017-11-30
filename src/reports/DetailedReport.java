@@ -1,5 +1,6 @@
 package reports;
 
+import elements.Element;
 import elements.Paragraph;
 import elements.Separator;
 import elements.Title;
@@ -48,7 +49,7 @@ public class DetailedReport extends Report {
       setFormat(format);
     } catch (IllegalArgumentException e) {
       e.printStackTrace();
-      this.format = new TextFormatPrinter();
+      this.format = new TextFormatPrinter("DetailedReport.txt");
     }
 
     generateDetailedReport();
@@ -70,10 +71,10 @@ public class DetailedReport extends Report {
     }
     switch (format) {
       case "txt":
-        this.format = new TextFormatPrinter();
+        this.format = new TextFormatPrinter("DetailedReport.txt");
         break;
       case "html":
-        this.format = new HtmlFormatPrinter();
+        this.format = new HtmlFormatPrinter("DetailedReport.html");
         break;
       default:
         assert false : "Invalid format";
@@ -100,8 +101,12 @@ public class DetailedReport extends Report {
     }
 
     setReportElements();
-
-    format.generateFile(this);
+    
+    for (Element element : elements) {
+      element.print(format);
+    }
+    
+    format.close();
   }
 
   /**

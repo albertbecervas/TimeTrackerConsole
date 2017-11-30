@@ -3,7 +3,7 @@ package model;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
+/** 
  * @invariant duration >=0
  * @invariant startWorkingDate != null
  * @invariant finalWorkingDate != null

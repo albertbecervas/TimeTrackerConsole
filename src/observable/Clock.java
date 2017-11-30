@@ -10,7 +10,6 @@ import java.util.TimerTask;
  * every specified period of time.
  * It takes the roll of a clock in a parallel thread of the main application.
  * @invariant CLOCK_SECONDS > 0
- * @version 2.00, 29/11/2017
  */
 public class Clock extends Observable {
 

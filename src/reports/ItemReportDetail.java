@@ -1,12 +1,11 @@
 package reports;
 
 /**
- * 
+ * Class that gets the values of the items when making the report.
  * @invariant name != null
  * @invariant duration != null
  * @invariant initialDate != null
  * @invariant finalDate != null
- * @version 2.00, 29/11/2017
  */
 public class ItemReportDetail {
 

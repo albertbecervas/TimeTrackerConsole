@@ -7,6 +7,12 @@ import java.util.Observer;
 
 import observable.Clock;
 
+/*
+ * Interval class contains the information of an interval which belongs to a task.
+ * Implements the observer in order to update the time and the serializable in order
+ * to be saved correctly.
+ */
+
 public class Interval implements Serializable, Observer {
 
   private static final long serialVersionUID = 1L;// Needed object identifier

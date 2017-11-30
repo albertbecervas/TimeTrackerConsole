@@ -9,9 +9,8 @@ import model.Project;
 import model.Task;
 import observable.Clock;
 
-/**
+/*
  * Prints the items tree in a formatted table every period of time.
- * @version 2.00, 29/11/2017
  */
 public class Printer implements Observer {
 

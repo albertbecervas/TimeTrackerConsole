@@ -1,50 +1,45 @@
 package format;
 
-import elements.Element;
+import elements.Paragraph;
+import elements.Separator;
+import elements.Title;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
-import reports.BriefReport;
-import reports.Report;
-
 /*
- * When the father class is called from a report this class generates a report in text format.
- * @author Albert
- * @version 2.00, 29/11/2017
+ * When the superclass is called from an element this class prints it onto the file.
+ * It also creates the file with the name given in the constructor.
  */
 public class TextFormatPrinter extends Format {
+  PrintWriter writer = null;
 
-  public TextFormatPrinter() {
-  }
-
-  /**
-   * Generate a report file.
-   * @param report Report to convert to file.
-   */
-  public void generateFile(Report report) {
-
-    PrintWriter writer = null;
-    String fileTitle = " ";
-
-    if (report instanceof BriefReport) {
-      fileTitle = "BriefReport.txt";
-    } else {
-      fileTitle = "DetailedReport.txt";
-    }
-
+  public TextFormatPrinter(String fileTitle) {
     try {
       writer = new PrintWriter(fileTitle, "UTF-8");
     } catch (FileNotFoundException | UnsupportedEncodingException e) {
       e.printStackTrace();
     }
+  }
 
-    for (Element element : report.getElements()) {
-      writer.println(element.getElement());
-    }
+  @Override
+  public void print(Separator separator) {
+    writer.println(separator.getElement());
+  }
 
+  @Override
+  public void print(Title title) {
+    writer.println(title.getElement());
+  }
+
+  @Override
+  public void print(Paragraph paragraph) {
+    writer.println(paragraph.getElement());
+  }
+  
+  @Override
+  public void close() {
     writer.close();
-
   }
 }

@@ -1,14 +1,22 @@
 package format;
 
-import reports.Report;
+import elements.Paragraph;
+import elements.Separator;
+import elements.Title;
 
 /*
- * This class will be called when a report is set and needs to be extracted it to a file
- * in an specific format.
- * @author Albert
- * @version 2.00, 29/11/2017
+ * Abstract superclass that defines the methods used to print the different types of element.
+ * This class will be called when an element adds itself to the file.
  */
-public abstract class Format {
 
-  public abstract void generateFile(Report report);
+public abstract class Format {
+  
+  public abstract void print(Separator separator);
+  
+  public abstract void print(Title title);
+  
+  public abstract void print(Paragraph paragraph);
+  
+  public abstract void close();
+
 }

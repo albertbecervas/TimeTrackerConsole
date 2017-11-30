@@ -12,7 +12,9 @@ import java.util.Date;
 import model.Item;
 
 /*
- * Generic class of a report that keeps the common data in all report types. 
+ * Generic superclass of a report that keeps the common data in all report types. 
+ * This class acts as a visitor of the different elements in order to 
+ * create the desired report.
  * @author Albert
  */
 public class Report {

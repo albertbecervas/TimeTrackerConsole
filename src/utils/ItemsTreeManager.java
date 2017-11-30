@@ -11,9 +11,8 @@ import java.util.ArrayList;
 import model.Item;
 import model.Project;
 
-/**
+/*
  * This class is used to manage the persistence of the items tree
- * @version 2.00, 29/11/2017
  */
 public abstract class ItemsTreeManager {
 
