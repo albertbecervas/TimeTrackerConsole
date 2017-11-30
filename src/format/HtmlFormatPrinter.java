@@ -45,7 +45,7 @@ public class HtmlFormatPrinter extends Format {
   }
   
   @Override
-  public void close(){
+  public void close() {
     writer.close();
   }
 
