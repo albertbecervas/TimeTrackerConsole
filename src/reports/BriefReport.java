@@ -1,5 +1,6 @@
 package reports;
 
+import model.Interval;
 import model.Item;
 import model.Project;
 import model.Task;
@@ -7,6 +8,7 @@ import model.Task;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import elements.Paragraph;
 import elements.Separator;
@@ -25,11 +27,15 @@ public class BriefReport extends Report {
     public ArrayList<ItemReportDetail> mainItems;
 
     private long duration = 0;
+    
+    private DateFormat df;
         
     public BriefReport(ArrayList<Item> items, String format) {
         this.items = items;
         
         mainItems = new ArrayList<ItemReportDetail>();
+        
+        this.df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
         
         setFormat(format);
         
@@ -66,11 +72,21 @@ public class BriefReport extends Report {
      * @param item Project or task that we want to calculate the details
      */
     private void setItemDetails(Item item) {
-		long period = recursiveTreeSearch(item);
-		String initialDate = calculateInitialDate(item);
-		String endDate = calculateFinalDate(item);
+		recursiveTreeSearch(item);
+		Date initialDate = calculateInitialDate(item);
+		Date endDate = calculateFinalDate(item);
 		
-		mainItems.add(new ItemReportDetail(item.getName(), period/1000, initialDate, endDate));//add this to the node projects lists
+		String initialDateText;
+		String endDateText;
+		if ( initialDate != null && endDate != null){
+		    initialDateText = df.format(initialDate);
+		    endDateText = df.format(endDate);
+		} else {
+			initialDateText = "-";
+			endDateText = "-";
+		}
+				
+		mainItems.add(new ItemReportDetail(item.getName(), duration/1000, initialDateText, endDateText));//add this to the node projects lists
 		duration = 0; //Reset the global variable in order to start again with the other item
 	}
 
@@ -80,8 +96,15 @@ public class BriefReport extends Report {
      * @return long The accumulate duration of all items inside
      */
     private long recursiveTreeSearch(Item item) {
+    	long itemDuration=0;
         if (item instanceof Task) { //Basic case     	     
-            calculateItemDuration(item);
+            for (Interval interval : ((Task) item).getIntervals()) {
+            	
+            	itemDuration = setIntervalDetails(item, itemDuration, interval);
+    		}
+
+    		duration += itemDuration;//update the projects time
+            
         } else {
             for (Item subItem : ((Project) item).getItems()) {
                 recursiveTreeSearch(subItem); //recursive function
@@ -89,55 +112,92 @@ public class BriefReport extends Report {
         }
         return duration;
     }
+    
 
-    /**
-     * This function calculates the included time of a Item in a concrete period
-     * @param item Item that we want to calculate
-     */
-	private void calculateItemDuration(Item item) {
-		long initialDateTime = item.getPeriod().getStartWorkingDate().getTime();
-		long endDateTime = item.getPeriod().getFinalWorkingDate().getTime();
-
-		if (initialDateTime > startPeriodTime && initialDateTime < endPeriodTime) {
-			if (endDateTime < endPeriodTime) {
-				duration += endDateTime - initialDateTime;
-		    } else {
-		    	duration += endPeriodTime - initialDateTime;
-		    }
-		} else if (endDateTime < endPeriodTime && endDateTime > startPeriodTime){
-			if (initialDateTime> startPeriodTime) {
-		    	duration += endDateTime - startPeriodTime;
-		    } else {
-		    	duration += endDateTime - startPeriodTime;
-		    }
-		} else if(initialDateTime < startPeriodTime && endDateTime > endPeriodTime){
-			duration += endPeriodTime - startPeriodTime;
+	/**
+     * Calculates the duration of every interval.
+	 * @param item task that we want to calculate the details of the interval
+	 * @param itemDuration duration of the task to return in the iterative function
+	 * @param interval that we want to set details
+	 * @return
+	 */
+	private long setIntervalDetails(Item item, long itemDuration, Interval interval) {
+		long intervalDuration = 0;
+		Date initialDate = calculateInitialDate(interval);
+		Date endDate = calculateFinalDate(interval);
+		
+		if(initialDate != null && endDate != null){
+		    intervalDuration = endDate.getTime() - initialDate.getTime();
+		    itemDuration += intervalDuration;
+		} else {
+			intervalDuration = 0;
 		}
+		return itemDuration;
 	}
     
-	private String calculateInitialDate(Item item) {
-		long initialDateTime = item.getPeriod().getStartWorkingDate().getTime();
-		String initialDate;
-		if (initialDateTime > startPeriodTime) {
-			DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-		    initialDate = df.format(item.getPeriod().getStartWorkingDate());
-		} else {
-		    initialDate = startDateString;
-		}
-		return initialDate;
-	}
-	
-    private String calculateFinalDate(Item item) {
-		long endDateTime = item.getPeriod().getFinalWorkingDate().getTime();
-		String endDate;
-		if (endDateTime < endPeriodTime) {
-			DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-		    endDate = df.format(item.getPeriod().getFinalWorkingDate());
-		} else {
-		    endDate = endDateString;
-		}
-		return endDate;
-	}
+    private Date calculateInitialDate(Item item){
+    	long initialDateTime = item.getPeriod().getStartWorkingDate().getTime();
+    	long endDateTime = item.getPeriod().getFinalWorkingDate().getTime();
+    	
+    	if(initialDateTime <= startPeriodTime){
+    		if(endDateTime <= startPeriodTime){
+    			return null;
+    		}
+    		return startPeriodDate;
+    	} else if( initialDateTime > startPeriodTime && initialDateTime <= endPeriodTime){
+    		return item.getPeriod().getStartWorkingDate();
+    	} else {
+    		return null;
+    	}    	
+    }
+    
+    private Date calculateInitialDate(Interval interval){
+    	long initialDateTime = interval.getInitialDate().getTime();
+    	long endDateTime = interval.getFinalDate().getTime();
+    	
+    	if(initialDateTime <= startPeriodTime){
+    		if(endDateTime <= startPeriodTime){
+    			return null;
+    		}
+    		return startPeriodDate;
+    	} else if( initialDateTime > startPeriodTime && initialDateTime <= endPeriodTime){
+    		return interval.getInitialDate();
+    	} else {
+    		return null;
+    	}    	
+    }
+    
+    private Date calculateFinalDate(Item item){
+    	long initialDateTime = item.getPeriod().getStartWorkingDate().getTime();
+    	long endDateTime = item.getPeriod().getFinalWorkingDate().getTime();
+    	
+    	if(endDateTime >= endPeriodTime){
+    		if(initialDateTime >= endPeriodTime){
+    			return null;
+    		}
+    		return endPeriodDate;
+    	} else if( endDateTime < endPeriodTime && endDateTime >= startPeriodTime){
+    		return item.getPeriod().getFinalWorkingDate();
+    	} else {
+    		return null;
+    	} 
+    }
+    
+    private Date calculateFinalDate(Interval interval){
+    	long initialDateTime = interval.getInitialDate().getTime();
+    	long endDateTime = interval.getFinalDate().getTime();
+    	
+    	if(endDateTime >= endPeriodTime){
+    		if(initialDateTime >= endPeriodTime){
+    			return null;
+    		}
+    		return endPeriodDate;
+    	} else if( endDateTime < endPeriodTime && endDateTime >= startPeriodTime){
+    		return interval.getFinalDate();
+    	} else {
+    		return null;
+    	} 
+    }
 
     /**
      * Once all items are calculated, we set the elements that we want our report to have

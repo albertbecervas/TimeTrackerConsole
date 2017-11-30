@@ -40,8 +40,12 @@ public class DetailedReport extends Report {
         this.df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
         
         initialiseLists();
-        
-        setFormat(format);
+        try{
+        	setFormat(format);
+        } catch(IllegalArgumentException e) {
+        	e.printStackTrace();
+        	this.format = new TextFormatPrinter();
+        }
         
         generateDetailedReport();
     }
@@ -56,23 +60,34 @@ public class DetailedReport extends Report {
     /**
      * Sets the format of the file that will be generated
      */
-    private void setFormat(String format){
+    private void setFormat(String format) throws IllegalArgumentException{
+    	if(format != "txt" && format != "html"){
+    		throw new IllegalArgumentException("Invalid value for format");
+    	}
     	switch(format){
     	case "txt":
         	this.format = new TextFormatPrinter();
         	break;
     	case "html":
     		this.format = new HtmlFormatPrinter();
+    		break;
+    	default:
+    		assert false: "Invalid format";
     	}
+    	
     }
     
     public void generateDetailedReport() {
 
         for (Item item : items) {
-        	if (item instanceof Project){
-	            setProjectsDetails(item);
-        	} else {
-        		recursiveTreeSearch(item, false);
+        	try {
+        		if (item instanceof Project) {
+                  setProjectsDetails(item);
+        		} else {
+                  recursiveTreeSearch(item, false);
+        		}
+        	} catch (NullPointerException e) {
+        		e.printStackTrace();
         	}
             duration = 0;
         }
@@ -87,7 +102,10 @@ public class DetailedReport extends Report {
      * @param item Project or task that we want to calculate the details
      * @return long The accumulate duration of all items inside
      */
-    private long recursiveTreeSearch(Item item,boolean isSubProject) {
+    private long recursiveTreeSearch(Item item,boolean isSubProject) throws NullPointerException {
+        if (item == null) {
+            throw new NullPointerException("Item is null."); 
+        }
     	long itemDuration=0;
         if (item instanceof Task) { 
 
@@ -100,7 +118,11 @@ public class DetailedReport extends Report {
 
         } else {
             for (Item subItem : ((Project) item).getItems()) {
-                recursiveTreeSearch(subItem, true); //recursive function
+            	try{
+            		recursiveTreeSearch(subItem, true);
+            	} catch(NullPointerException e) {
+            		e.printStackTrace();
+            	}
                 System.out.println("duration-->"+ subItem.getName()+"-->"+ subProjectDuration);
                 if (subItem instanceof Project) {
                     setSubProjectDetails(subItem);
@@ -119,12 +141,22 @@ public class DetailedReport extends Report {
      * @param item Project that we want to calculate the details
      */
 	private void setProjectsDetails(Item item) {
+	    if (item == null) {
+	        throw new NullPointerException("Item is null."); 
+	    }
 		recursiveTreeSearch(item, false );
 		Date initialDate = calculateInitialDate(item);
 		Date endDate = calculateFinalDate(item);
 		
-		String initialDateText = df.format(initialDate);
-        String endDateText = df.format(endDate);
+		String initialDateText;
+		String endDateText;
+		if ( initialDate != null && endDate != null){
+		    initialDateText = df.format(initialDate);
+		    endDateText = df.format(endDate);
+		} else {
+			initialDateText = "-";
+			endDateText = "-";
+		}
 		
 		projects.add(new ItemReportDetail(item.getName(), duration/1000, initialDateText, endDateText));//add this to the node projects lists
 	}
